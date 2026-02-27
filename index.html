@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pl" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="DRAGON-IA UltraChat AI Omega – inteligentny asystent AI z quiz i trybem agenta." />
+  <meta name="theme-color" content="#6e40c9" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="DRAGON-IA" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="DRAGON-IA UltraChat AI Omega" />
+  <meta property="og:description" content="Inteligentny asystent AI z trybem czatu, quizu i agenta." />
+  <meta property="og:type" content="website" />
+
+  <title>DRAGON-IA UltraChat AI Omega</title>
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header>
+    <a href="/" class="logo" aria-label="DRAGON-IA strona główna">
+      🐉 <span>DRAGON-IA</span>
+    </a>
+
+    <!-- SAFE AdSense ON/OFF toggle -->
+    <div class="ads-control">
+      <span id="ads-label">Reklamy</span>
+      <label class="toggle" aria-label="Włącz lub wyłącz reklamy AdSense">
+        <input type="checkbox" id="ads-toggle" aria-labelledby="ads-label" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </header>
+
+  <!-- ── Tab navigation ── -->
+  <nav role="tablist" aria-label="Tryby aplikacji">
+    <button role="tab" data-tab="chat-panel" aria-selected="true" aria-controls="chat-panel">
+      💬 Czat
+    </button>
+    <button role="tab" data-tab="quiz-panel" aria-selected="false" aria-controls="quiz-panel">
+      🧠 Quiz
+    </button>
+  </nav>
+
+  <!-- ── Main content ── -->
+  <main>
+
+    <!-- Chat panel -->
+    <section id="chat-panel" class="tab-panel" role="tabpanel" aria-label="Panel czatu">
+      <div class="chat-wrapper">
+        <div id="chat-log" aria-live="polite" aria-label="Historia czatu"></div>
+
+        <div class="chat-input-row">
+          <textarea
+            id="chat-input"
+            rows="2"
+            placeholder="Wpisz wiadomość… (Enter = wyślij, Shift+Enter = nowa linia)"
+            aria-label="Wiadomość do asystenta AI"
+          ></textarea>
+          <button class="btn" id="send-btn" aria-label="Wyślij wiadomość">Wyślij</button>
+          <button class="btn btn--secondary" id="clear-btn" aria-label="Wyczyść czat">🗑</button>
+        </div>
+
+        <!-- AdSense banner – shown only when ads are enabled -->
+        <div class="ads-banner" aria-label="Reklama">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+               data-ad-slot="0000000000"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quiz panel -->
+    <section id="quiz-panel" class="tab-panel" role="tabpanel" aria-label="Panel quizu" hidden>
+      <h2>Quiz AI</h2>
+      <button class="btn" id="quiz-start-btn">▶ Rozpocznij quiz</button>
+      <div id="quiz-container" style="margin-top:1rem;"></div>
+    </section>
+
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <small>© 2024 DRAGON-IA &mdash; <a href="/manifest.json" style="color:inherit">PWA</a> &mdash; <a href="https://github.com/hetwerk1943/DRAGON-IA" style="color:inherit">GitHub</a></small>
+  </footer>
+
+  <!-- App entry point (ES module) -->
+  <script type="module" src="/main.js"></script>
+
+</body>
+</html>
