@@ -1,39 +1,39 @@
 /*
- * 🎨 Paleta kolorów Naruto
+ * 🎨 Naruto Color Palette
  *
  * Naruto-inspired color palette for DRAGON-IA application.
  * Colors are defined as CSS custom properties for easy reuse.
  */
 
 :root {
-  /* Tło aplikacji – Mroczne tło nocy w wiosce Konohy */
+  /* App background – Dark Konoha night sky */
   --color-background: #1C1C1C;
 
-  /* Nagłówki (h1, h2) – Pomarańczowa kurtka Naruto */
+  /* Headings (h1, h2) – Naruto's orange jacket */
   --color-heading: #FF7F50;
 
-  /* Tekst główny (p, span) – Jasny kontrast na ciemnym tle */
+  /* Body text (p, span) – Light contrast on dark background */
   --color-text: #F5F5F5;
 
-  /* Akcenty / przyciski – Intensywna pomarańcz / energia */
+  /* Accents / buttons – Intense orange energy */
   --color-accent: #FF4500;
 
-  /* Linki i hover – Zielony jak liście w wiosce */
+  /* Links and hover – Green like village leaves */
   --color-link: #32CD32;
 
-  /* Ostrzeżenia / alerty – Czerwone, jak symbole walki */
+  /* Warnings / alerts – Red battle symbols */
   --color-alert: #FF0000;
 
-  /* Karty / sekcje – Ciemny popiel dla oddzielenia bloków */
+  /* Cards / sections – Dark ash for block separation */
   --color-card: #2E2E2E;
 
-  /* Tło banerów reklam SAFE AdSense – Styl Naruto */
+  /* Ad banner background – Naruto style */
   --color-banner: #FFA500;
 
-  /* Cienie i border – Kolory drewna, dojo */
+  /* Shadows and borders – Wood / dojo tones */
   --color-border: #8B4513;
 
-  /* Footer / stopka – Neutralne ciemne zakończenie */
+  /* Footer – Neutral dark finish */
   --color-footer: #0D1117;
 }
 
