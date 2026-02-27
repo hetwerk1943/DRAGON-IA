@@ -1,0 +1,162 @@
+/* =====================================================================
+   UltraChat AI Omega – web/joke-generator/style.css
+   Localised styles for the Joke Generator mini-app
+   ===================================================================== */
+
+/* ── Inherit root variables from parent styles.css via link ───────── */
+/* (Parent styles.css is not linked here; we redefine only what's needed) */
+
+:root {
+  --bg:          #0d1117;
+  --surface:     #161b22;
+  --border:      #30363d;
+  --accent:      #58a6ff;
+  --accent-dark: #1f6feb;
+  --text:        #c9d1d9;
+  --text-muted:  #8b949e;
+  --success:     #3fb950;
+  --radius:      8px;
+  --font:        'Segoe UI', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  gap: 1.5rem;
+}
+
+h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+}
+
+/* ── Category selector ────────────────────────────────────────────── */
+.category-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.cat-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: var(--font);
+  padding: 0.35rem 0.9rem;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.cat-btn:hover,
+.cat-btn.active {
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--accent-dark);
+}
+
+/* ── Joke card ────────────────────────────────────────────────────── */
+.joke-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  max-width: 560px;
+  min-height: 160px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  transition: opacity 0.3s;
+}
+
+.joke-card.loading { opacity: 0.5; }
+
+.joke-setup {
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.joke-punchline {
+  color: var(--accent);
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.5;
+  min-height: 1.5rem;
+}
+
+.joke-category {
+  background: var(--accent-dark);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+  padding: 0.15rem 0.6rem;
+  text-transform: uppercase;
+}
+
+/* ── Reveal / Next buttons ────────────────────────────────────────── */
+.btn-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 0.9rem;
+  padding: 0.55rem 1.2rem;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn--primary   { background: var(--accent-dark); color: #fff; }
+.btn--primary:hover:not(:disabled) { background: var(--accent); }
+
+.btn--secondary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.btn--secondary:hover:not(:disabled) { color: var(--text); }
+
+/* ── Score / counter ──────────────────────────────────────────────── */
+.score-bar {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+/* ── Back link ────────────────────────────────────────────────────── */
+.back-link {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+.back-link:hover { color: var(--text); text-decoration: underline; }
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.35rem; }
+  .joke-card { padding: 1.25rem 1rem; }
+}

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="UltraChat AI Omega – interfejs agenta repozytorium" />
+  <title>Repo Agent – UltraChat AI Omega</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="manifest" href="../../manifest.json" />
+  <meta name="theme-color" content="#58a6ff" />
+  <style>
+    .diff-viewer {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 0.8rem;
+      height: 280px;
+      overflow: auto;
+      padding: 0.75rem 1rem;
+      white-space: pre;
+      color: var(--text);
+    }
+    .diff-viewer .diff-add  { color: var(--success); }
+    .diff-viewer .diff-del  { color: var(--danger);  }
+    .diff-viewer .diff-meta { color: var(--text-muted); }
+    .file-tree {
+      list-style: none;
+      font-size: 0.85rem;
+      line-height: 1.8;
+    }
+    .file-tree li { cursor: pointer; padding: 0.15rem 0.5rem; border-radius: 4px; }
+    .file-tree li:hover { background: var(--border); }
+    .file-tree li.selected { background: var(--accent-dark); color: #fff; }
+    .file-tree .tree-icon { margin-right: 0.35rem; }
+  </style>
+</head>
+<body>
+
+  <!-- Top navigation -->
+  <nav class="navbar" aria-label="Główna nawigacja">
+    <span class="navbar__brand">🐉 UltraChat AI Omega</span>
+    <div class="navbar__links">
+      <a href="../../index.html">Chat</a>
+      <a href="../../agent.html">Agent</a>
+      <a href="index.html" class="active" aria-current="page">Repo Agent</a>
+      <a href="../joke-generator/index.html">Żarty</a>
+    </div>
+  </nav>
+
+  <div class="ad-banner ad-banner--leaderboard" aria-hidden="true">REKLAMA – 728×90</div>
+
+  <div class="layout" style="grid-template-columns:220px 1fr">
+    <!-- File tree -->
+    <aside class="sidebar" aria-label="Drzewo plików">
+      <div class="panel" style="flex:1">
+        <p class="panel__title">Struktura plików</p>
+        <ul class="file-tree" id="file-tree" role="tree" aria-label="Pliki repozytorium">
+          <li role="treeitem" data-file="index.html"><span class="tree-icon">📄</span>index.html</li>
+          <li role="treeitem" data-file="agent.html"><span class="tree-icon">📄</span>agent.html</li>
+          <li role="treeitem" data-file="main.js"><span class="tree-icon">📜</span>main.js</li>
+          <li role="treeitem" data-file="quiz.js"><span class="tree-icon">📜</span>quiz.js</li>
+          <li role="treeitem" data-file="styles.css"><span class="tree-icon">🎨</span>styles.css</li>
+          <li role="treeitem" data-file="service-worker.js"><span class="tree-icon">⚙️</span>service-worker.js</li>
+          <li role="treeitem" data-file="manifest.json"><span class="tree-icon">📋</span>manifest.json</li>
+          <li role="treeitem" data-file="package.json"><span class="tree-icon">📦</span>package.json</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content" aria-label="Przeglądarka pliku">
+
+      <h1 style="font-size:1.1rem;font-weight:700">📂 Repo Agent – Podgląd pliku</h1>
+
+      <!-- File info bar -->
+      <div class="agent-status-bar" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;font-size:.875rem">
+        <span id="file-badge" style="background:var(--accent-dark);border-radius:12px;color:#fff;font-size:.7rem;padding:.15rem .55rem;text-transform:uppercase;letter-spacing:.5px">Brak wyboru</span>
+        <span id="file-info">Wybierz plik z drzewa po lewej, aby zobaczyć jego zawartość.</span>
+      </div>
+
+      <!-- Diff / source viewer -->
+      <div class="panel">
+        <p class="panel__title">Podgląd / diff</p>
+        <div id="diff-viewer" class="diff-viewer" role="region" aria-label="Podgląd pliku" aria-live="polite">
+Wybierz plik, aby zobaczyć jego zawartość.
+        </div>
+        <div class="mt-1" style="display:flex;gap:.5rem">
+          <button class="btn btn--primary"   id="analyze-file-btn" disabled>🔍 Analizuj plik</button>
+          <button class="btn btn--secondary" id="copy-btn"         disabled>📋 Kopiuj</button>
+        </div>
+      </div>
+
+      <!-- AI analysis output -->
+      <div class="panel" id="ai-analysis-panel" style="display:none">
+        <p class="panel__title">Analiza AI</p>
+        <div id="ai-analysis-output" style="font-size:.875rem;line-height:1.6;white-space:pre-wrap" aria-live="polite"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <div class="ad-banner ad-banner--leaderboard" aria-hidden="true">REKLAMA – 728×90</div>
+
+  <footer>
+    <p>© 2024 DRAGON-IA · UltraChat AI Omega · <a href="https://mozilla.org/MPL/2.0/" target="_blank" rel="noopener">MPL-2.0</a></p>
+  </footer>
+
+  <script>
+    'use strict';
+
+    /* ── Simulated file contents for demo ─────────────────────────── */
+    const FILE_DEMOS = {
+      'index.html':       '<!-- index.html -->\n<!DOCTYPE html>\n<html lang="pl">…</html>',
+      'agent.html':       '<!-- agent.html -->\n<!DOCTYPE html>\n<html lang="pl">…</html>',
+      'main.js':          "// main.js\n'use strict';\n\nconst CONFIG = {\n  apiEndpoint: '/api/chat',\n  defaultModel: 'gpt-4o-mini',\n};\n",
+      'quiz.js':          "// quiz.js\n'use strict';\n\nconst QUESTIONS = [ /* … */ ];\n",
+      'styles.css':       '/* styles.css */\n:root {\n  --bg: #0d1117;\n  --accent: #58a6ff;\n}\n',
+      'service-worker.js':'// service-worker.js\nconst CACHE_NAME = \'ultrachat-v1\';\n',
+      'manifest.json':    '{\n  "name": "UltraChat AI Omega",\n  "start_url": "/index.html"\n}\n',
+      'package.json':     '{\n  "name": "ultrachat-ai-omega",\n  "version": "1.0.0"\n}\n',
+    };
+
+    const AI_ANALYSIS = {
+      'main.js':  'Plik wygląda poprawnie.\n✅ Brak oczywistych błędów.\n⚠️  Sugestia: dodaj obsługę błędów sieciowych w fetch().',
+      'quiz.js':  'Plik wygląda poprawnie.\n✅ Pytania zakodowane statycznie.\n💡 Rozważ ładowanie pytań z zewnętrznego JSON.',
+      'styles.css':'✅ Responsywny layout z CSS Grid.\n💡 Rozważ dodanie dark/light mode toggle.',
+    };
+
+    /* ── DOM refs ──────────────────────────────────────────────────── */
+    const fileTree       = document.getElementById('file-tree');
+    const diffViewer     = document.getElementById('diff-viewer');
+    const fileBadge      = document.getElementById('file-badge');
+    const fileInfo       = document.getElementById('file-info');
+    const analyzeFileBtn = document.getElementById('analyze-file-btn');
+    const copyBtn        = document.getElementById('copy-btn');
+    const aiPanel        = document.getElementById('ai-analysis-panel');
+    const aiOutput       = document.getElementById('ai-analysis-output');
+
+    let selectedFile = null;
+
+    /* ── File selection ────────────────────────────────────────────── */
+    fileTree.addEventListener('click', (e) => {
+      const li = e.target.closest('li[data-file]');
+      if (!li) return;
+
+      fileTree.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
+      li.classList.add('selected');
+      selectedFile = li.dataset.file;
+
+      fileBadge.textContent = selectedFile;
+      fileInfo.textContent  = `Wybrany plik: ${selectedFile}`;
+      diffViewer.textContent = FILE_DEMOS[selectedFile] || '(brak podglądu)';
+
+      analyzeFileBtn.disabled = false;
+      copyBtn.disabled        = false;
+      aiPanel.style.display   = 'none';
+      aiOutput.textContent    = '';
+    });
+
+    /* ── Analyse file with AI (simulated) ─────────────────────────── */
+    analyzeFileBtn.addEventListener('click', async () => {
+      if (!selectedFile) return;
+      analyzeFileBtn.disabled = true;
+      aiPanel.style.display   = 'block';
+      aiOutput.textContent    = 'Analizuję…';
+
+      await new Promise(r => setTimeout(r, 900));
+
+      aiOutput.textContent =
+        AI_ANALYSIS[selectedFile] || `✅ Plik ${selectedFile} nie zawiera znanych problemów.`;
+      analyzeFileBtn.disabled = false;
+    });
+
+    /* ── Copy to clipboard ─────────────────────────────────────────── */
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(diffViewer.textContent).then(() => {
+        copyBtn.textContent = '✅ Skopiowano';
+        setTimeout(() => { copyBtn.textContent = '📋 Kopiuj'; }, 1500);
+      });
+    });
+
+    /* ── PWA SW ─────────────────────────────────────────────────────── */
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>

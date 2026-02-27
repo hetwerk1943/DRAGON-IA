@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="UltraChat AI Omega – generator polskich żartów" />
+  <title>Generator Żartów – UltraChat AI Omega</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="../../manifest.json" />
+  <meta name="theme-color" content="#58a6ff" />
+</head>
+<body>
+
+  <a href="../../index.html" class="back-link" aria-label="Powrót do strony głównej">← Powrót do chatu</a>
+
+  <h1>😂 Generator Żartów</h1>
+  <p style="color:var(--text-muted);font-size:.875rem;text-align:center">
+    Wybierz kategorię i sprawdź, czy AI ma poczucie humoru.
+  </p>
+
+  <!-- AdSense placeholder -->
+  <div style="background:var(--surface);border:1px dashed var(--border);color:var(--text-muted);font-size:.75rem;text-align:center;padding:.5rem;width:100%;max-width:560px;min-height:60px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius)" aria-hidden="true">
+    REKLAMA – 468×60
+  </div>
+
+  <!-- Category filter -->
+  <div class="category-bar" role="group" aria-label="Kategorie żartów">
+    <button class="cat-btn active" data-category="wszystkie">🌍 Wszystkie</button>
+    <button class="cat-btn" data-category="programowanie">💻 Programowanie</button>
+    <button class="cat-btn" data-category="AI">🤖 AI</button>
+    <button class="cat-btn" data-category="ogólne">🎭 Ogólne</button>
+  </div>
+
+  <!-- Joke card -->
+  <div id="joke-card" class="joke-card" role="region" aria-label="Bieżący żart" aria-live="polite">
+    <span id="joke-category-badge" class="joke-category">wszystkie</span>
+    <p id="joke-setup" class="joke-setup">Ładowanie żartu…</p>
+    <p id="joke-punchline" class="joke-punchline" aria-live="polite"></p>
+  </div>
+
+  <!-- Controls -->
+  <div class="btn-row">
+    <button id="reveal-btn" class="btn btn--primary" disabled aria-label="Pokaż puentę">😂 Pokaż puentę</button>
+    <button id="next-btn"   class="btn btn--secondary" disabled aria-label="Następny żart">➡️ Następny żart</button>
+  </div>
+
+  <!-- Score -->
+  <p id="joke-score" class="score-bar" aria-live="polite">Zobaczono: 0 żartów</p>
+
+  <!-- AdSense rectangle -->
+  <div style="background:var(--surface);border:1px dashed var(--border);color:var(--text-muted);font-size:.75rem;text-align:center;padding:.5rem;width:300px;min-height:250px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius)" aria-hidden="true">
+    REKLAMA<br />300×250
+  </div>
+
+  <footer style="color:var(--text-muted);font-size:.8rem;text-align:center;padding:.75rem 0">
+    © 2024 DRAGON-IA · UltraChat AI Omega
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
