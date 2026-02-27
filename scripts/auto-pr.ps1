@@ -77,18 +77,24 @@ git checkout -b $branchName
 if ($LASTEXITCODE -ne 0) { throw "Failed to create branch '$branchName'." }
 
 # ── Stage the specified files ────────────────────────────────────────────
+$stagedCount = 0
 foreach ($file in $FilePath) {
     if (-not (Test-Path $file)) {
         Write-Warning "File not found, skipping: $file"
         continue
     }
-    git add $file
+    git add -- $file
     if ($LASTEXITCODE -ne 0) { throw "Failed to stage file '$file'." }
     Write-Host "Staged: $file"
+    $stagedCount++
+}
+
+if ($stagedCount -eq 0) {
+    throw "No files were staged. Ensure the specified paths exist."
 }
 
 # ── Commit ───────────────────────────────────────────────────────────────
-git commit -m $CommitMessage
+git commit -m "$CommitMessage"
 if ($LASTEXITCODE -ne 0) { throw "Nothing to commit or commit failed." }
 
 # ── Push the branch ─────────────────────────────────────────────────────
@@ -98,7 +104,7 @@ if ($LASTEXITCODE -ne 0) { throw "Failed to push branch '$branchName'." }
 
 # ── Open a pull request using the GitHub CLI ─────────────────────────────
 Write-Host "Creating pull request..."
-gh pr create --base $BaseBranch --head $branchName --title $PrTitle --body $PrBody
+gh pr create --base "$BaseBranch" --head "$branchName" --title "$PrTitle" --body "$PrBody"
 if ($LASTEXITCODE -ne 0) { throw "Failed to create pull request." }
 
 Write-Host "Done! Pull request created on branch '$branchName'."
