@@ -7,7 +7,7 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
-const { WebSocketServer } = require('ws');
+const { WebSocketServer, WebSocket } = require('ws');
 const { v4: uuidv4 } = require('uuid');
 
 const Orchestrator = require('./orchestrator');
@@ -116,7 +116,7 @@ wss.on('connection', (ws) => {
 function broadcast(data) {
   const msg = JSON.stringify(data);
   for (const client of wss.clients) {
-    if (client.readyState === 1 /* OPEN */) client.send(msg);
+    if (client.readyState === WebSocket.OPEN) client.send(msg);
   }
 }
 

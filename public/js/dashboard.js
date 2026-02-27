@@ -116,7 +116,11 @@
   // ── Controls ─────────────────────────────────────────────────────────────
   btnRunAll.addEventListener('click', () => {
     addLog('report', 'Dispatching run-all to agents...');
-    ws.send(JSON.stringify({ type: 'run-all', payload: { adSafeMode: adsafeToggle.checked } }));
+    try {
+      ws.send(JSON.stringify({ type: 'run-all', payload: { adSafeMode: adsafeToggle.checked } }));
+    } catch (err) {
+      addLog('error', 'Failed to send command: ' + err.message);
+    }
   });
 
   btnRefresh.addEventListener('click', () => loadDashboard());

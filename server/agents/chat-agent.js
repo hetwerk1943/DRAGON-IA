@@ -1,6 +1,7 @@
 'use strict';
 
 const crypto = require('crypto');
+const fetch = require('node-fetch');
 
 /**
  * ChatAgent – handles real-time conversations, multi-model support,
@@ -71,7 +72,6 @@ class ChatAgent {
   }
 
   async _callOpenAI(session, userMessage, apiKey, model) {
-    const fetch = require('node-fetch');
     const messages = session.history
       .slice(-20)
       .map(h => ({ role: h.role, content: h.content }));

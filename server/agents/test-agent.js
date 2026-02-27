@@ -2,6 +2,7 @@
 
 const { execFile } = require('child_process');
 const { promisify } = require('util');
+const path = require('path');
 const execFileAsync = promisify(execFile);
 
 /**
@@ -53,6 +54,10 @@ class TestAgent {
     try {
       const dir = cwd || process.cwd();
       const file = entryFile || 'server/index.js';
+      // Validate file path to prevent directory traversal
+      if (file.includes('..') || path.isAbsolute(file)) {
+        return { task: 'node-check', passed: false, output: 'Invalid file path' };
+      }
       await execFileAsync('node', ['--check', file], { cwd: dir });
       return { task: 'node-check', passed: true, output: 'Node syntax OK' };
     } catch (err) {
