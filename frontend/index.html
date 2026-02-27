@@ -1,33 +1,46 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UltraChat AI</title>
-<link rel="stylesheet" href="styles.css">
-<!-- Google AdSense -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="UltraChat AI – własny asystent AI oparty na GPT-4. Prowadź rozmowy w czasie rzeczywistym, offline i z historią czatu.">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>UltraChat AI</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Google AdSense (załaduj tylko gdy włączone) -->
 </head>
-<body>
-<h1>UltraChat AI</h1>
+<body class="theme-dark">
+  <header>
+    <h1>🤖 UltraChat AI</h1>
+    <div class="header-controls">
+      <span id="offline-badge" class="badge badge-offline" hidden>📴 Offline</span>
+      <button id="theme-toggle" title="Przełącz motyw">🌙</button>
+      <button id="clear-btn" title="Wyczyść historię">🗑️</button>
+    </div>
+  </header>
 
-<!-- AdSense TOP -->
-<div class="ad-banner" id="ad-top"></div>
+  <!-- AdSense TOP -->
+  <div class="ad-banner" id="ad-top" aria-hidden="true"></div>
 
-<textarea id="userInput" placeholder="Napisz coś..."></textarea><br>
-<button onclick="sendMessage()">Wyślij</button>
+  <main id="chat-messages" role="log" aria-live="polite" aria-label="Historia czatu"></main>
 
-<pre id="chatOutput"></pre>
+  <!-- AdSense MIDDLE -->
+  <div class="ad-banner" id="ad-middle" aria-hidden="true"></div>
 
-<!-- AdSense MIDDLE -->
-<div class="ad-banner" id="ad-middle"></div>
+  <form id="chat-form" autocomplete="off">
+    <textarea
+      id="userInput"
+      placeholder="Napisz wiadomość… (Enter = wyślij, Shift+Enter = nowa linia)"
+      rows="3"
+      aria-label="Wpisz wiadomość"
+    ></textarea>
+    <button type="submit" id="send-btn">Wyślij ➤</button>
+  </form>
 
-<script src="chat.js"></script>
+  <!-- AdSense BOTTOM -->
+  <div class="ad-banner" id="ad-bottom" aria-hidden="true"></div>
 
-<!-- AdSense BOTTOM -->
-<div class="ad-banner" id="ad-bottom"></div>
-<script>
-  applyAdSenseMode();
-</script>
+  <script src="chat.js"></script>
 </body>
 </html>
