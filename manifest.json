@@ -1,0 +1,41 @@
+{
+  "name": "DRAGON-IA UltraChat AI Omega",
+  "short_name": "DRAGON-IA",
+  "description": "AI-powered chat assistant with quiz and agent capabilities",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#6e40c9",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "pl",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Nowy czat",
+      "short_name": "Czat",
+      "url": "/?mode=chat",
+      "description": "Otwórz nowy czat z AI"
+    },
+    {
+      "name": "Quiz",
+      "short_name": "Quiz",
+      "url": "/?mode=quiz",
+      "description": "Uruchom quiz AI"
+    }
+  ]
+}
