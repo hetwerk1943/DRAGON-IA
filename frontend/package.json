@@ -1,0 +1,16 @@
+{
+  "name": "@dragon-ai/frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DRAGON AI — Frontend application",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint src/ --ext .ts,.tsx",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\""
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

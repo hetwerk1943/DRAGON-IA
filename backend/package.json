@@ -1,0 +1,17 @@
+{
+  "name": "@dragon-ai/backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DRAGON AI — Backend API server",
+  "scripts": {
+    "dev": "ts-node-dev --respawn src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "eslint src/ --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "test": "jest"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
