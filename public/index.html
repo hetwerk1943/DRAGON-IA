@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DRAGON-IA – AI Chat</title>
+  <meta name="description" content="DRAGON-IA: Global Multi-Agent AI Orchestration System" />
+  <meta property="og:title" content="DRAGON-IA" />
+  <meta property="og:description" content="Global Multi-Agent AI Orchestration" />
+  <meta property="og:type" content="website" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#238636" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d1117; color: #c9d1d9; height: 100vh; display: flex; flex-direction: column; }
+    header { background: #161b22; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #30363d; }
+    header h1 { font-size: 1.3rem; color: #58a6ff; }
+    header nav a { color: #8b949e; text-decoration: none; margin-left: 16px; font-size: 0.9rem; }
+    header nav a:hover { color: #58a6ff; }
+    #status-bar { background: #161b22; padding: 4px 24px; font-size: 0.75rem; color: #8b949e; border-bottom: 1px solid #21262d; }
+    #model-select { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; border-radius: 4px; padding: 2px 6px; margin-left: 8px; }
+    main { flex: 1; display: flex; flex-direction: column; padding: 16px; overflow: hidden; }
+    #chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 8px; }
+    .msg { max-width: 75%; padding: 10px 14px; border-radius: 12px; line-height: 1.5; word-break: break-word; }
+    .msg.user   { background: #1f6feb; color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .msg.assistant { background: #21262d; color: #c9d1d9; align-self: flex-start; border-bottom-left-radius: 4px; }
+    .msg.system { background: #161b22; color: #8b949e; align-self: center; font-style: italic; font-size: 0.85rem; }
+    #input-row { display: flex; gap: 8px; margin-top: 12px; }
+    #msg-input { flex: 1; background: #161b22; border: 1px solid #30363d; color: #c9d1d9; border-radius: 8px; padding: 10px 14px; font-size: 1rem; resize: none; }
+    #msg-input:focus { outline: none; border-color: #58a6ff; }
+    button { background: #238636; color: #fff; border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; font-size: 1rem; }
+    button:hover { background: #2ea043; }
+    button:disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
+    #offline-banner { display: none; background: #b62324; color: #fff; text-align: center; padding: 6px; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div id="offline-banner">You are offline. Messages will not be sent.</div>
+  <header>
+    <h1>DRAGON-IA</h1>
+    <nav>
+      <a href="/agent.html">Dashboard</a>
+      <span style="color:#8b949e;margin-left:16px;">Model:
+        <select id="model-select">
+          <option value="gpt-4">GPT-4</option>
+          <option value="gpt-3.5-turbo">GPT-3.5</option>
+          <option value="claude">Claude</option>
+          <option value="llama">LLaMA</option>
+          <option value="local">Local LLM</option>
+        </select>
+      </span>
+    </nav>
+  </header>
+  <div id="status-bar">WebSocket: <span id="ws-status">connecting...</span></div>
+  <main>
+    <div id="chat-box">
+      <div class="msg system">Welcome to DRAGON-IA. How can I help you today?</div>
+    </div>
+    <div id="input-row">
+      <textarea id="msg-input" rows="2" placeholder="Type a message... (Shift+Enter for newline)"></textarea>
+      <button id="send-btn">Send</button>
+    </div>
+  </main>
+  <script src="/js/app.js"></script>
+</body>
+</html>
