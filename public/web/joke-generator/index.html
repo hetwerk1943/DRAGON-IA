@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://v2.jokeapi.dev;" />
+  <meta name="description" content="DRAGON-IA Joke Generator – Fun module" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <title>🎭 Joke Generator – DRAGON-IA</title>
+  <link rel="manifest" href="/manifest.json" />
+  <style>
+    :root {
+      --bg: #1a1a2e; --surface: #16213e; --primary: #0f3460; --accent: #f39c12;
+      --text: #eaeaea; --text-muted: #888; --border: #2a2a4a;
+    }
+    [data-theme="light"] {
+      --bg: #fffbf0; --surface: #ffffff; --primary: #f39c12; --accent: #e67e22;
+      --text: #1a1a2e; --text-muted: #666; --border: #ffe0a0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { font-size: 1.15rem; font-weight: 700; }
+    .header-actions { display: flex; gap: 0.5rem; align-items: center; }
+    a.nav-link { font-size: 0.8rem; color: var(--text-muted); text-decoration: none; padding: 0.3rem 0.6rem; border-radius: 6px; border: 1px solid var(--border); }
+    a.nav-link:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+    button { cursor: pointer; border: none; border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.88rem; transition: opacity .2s, transform .1s; }
+    button:hover { opacity: 0.88; }
+    button:active { transform: scale(0.97); }
+    .btn-accent { background: var(--accent); color: #fff; font-weight: 700; font-size: 1rem; padding: 0.7rem 1.5rem; }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+    .ad-toggle-label { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--text-muted); cursor: pointer; }
+    .ad-toggle-label input { width: 0; height: 0; opacity: 0; position: absolute; }
+    .ad-toggle-slider { width: 32px; height: 18px; background: var(--border); border-radius: 9px; position: relative; transition: background .2s; }
+    .ad-toggle-slider::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: #fff; border-radius: 50%; transition: transform .2s; }
+    .ad-toggle-label input:checked + .ad-toggle-slider { background: var(--primary); }
+    .ad-toggle-label input:checked + .ad-toggle-slider::after { transform: translateX(14px); }
+    /* Main */
+    .page { flex: 1; max-width: 680px; margin: 0 auto; padding: 2rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 1.25rem; width: 100%; }
+    .joke-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2rem 1.75rem; text-align: center; width: 100%; min-height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.75rem; box-shadow: 0 4px 20px rgba(0,0,0,0.2); transition: transform .2s; }
+    .joke-card:hover { transform: translateY(-2px); }
+    .joke-setup { font-size: 1.05rem; font-weight: 600; color: var(--text); }
+    .joke-delivery { font-size: 0.95rem; color: var(--accent); font-style: italic; margin-top: 0.5rem; }
+    .joke-single { font-size: 1rem; color: var(--text); }
+    .joke-category { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+    .joke-emoji { font-size: 2.5rem; }
+    .loading { color: var(--text-muted); font-size: 0.9rem; }
+    .controls { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+    .category-select { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.85rem; }
+    /* Ad slots */
+    .ad-slot { background: repeating-linear-gradient(45deg, var(--border) 0, var(--border) 1px, transparent 0, transparent 50%) 0 0 / 8px 8px; border: 1px dashed var(--border); border-radius: 6px; padding: 0.65rem; text-align: center; font-size: 0.73rem; color: var(--text-muted); width: 100%; }
+    .ads-hidden .ad-slot { display: none; }
+    footer { text-align: center; padding: 1rem; font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--border); }
+  </style>
+</head>
+<body data-theme="dark">
+<header>
+  <h1>🎭 Joke Generator</h1>
+  <div class="header-actions">
+    <a href="/" class="nav-link">← Chat</a>
+    <button class="btn-ghost" id="theme-btn" aria-label="Toggle theme">🌙</button>
+    <label class="ad-toggle-label" title="Toggle ads">
+      <input type="checkbox" id="ad-toggle" role="switch" aria-label="Toggle ads" />
+      <span class="ad-toggle-slider"></span>
+      Ads
+    </label>
+  </div>
+</header>
+
+<main class="page">
+  <!-- Ad slot top -->
+  <div class="ad-slot" aria-hidden="true"><!-- AdSense Placeholder – Top --><br/>📢 Ad Slot 1 (Top)<br/><small>AdSense code goes here</small></div>
+
+  <div class="joke-card" id="joke-card" aria-live="polite" aria-label="Current joke">
+    <div class="joke-emoji">🎭</div>
+    <div class="joke-single">Click "New Joke" to get started!</div>
+  </div>
+
+  <div class="controls">
+    <select class="category-select" id="category-select" aria-label="Joke category">
+      <option value="Any">Any Category</option>
+      <option value="Programming">Programming</option>
+      <option value="Misc">Miscellaneous</option>
+      <option value="Pun">Puns</option>
+      <option value="Spooky">Spooky</option>
+      <option value="Christmas">Christmas</option>
+    </select>
+    <button class="btn-accent" id="joke-btn">🎲 New Joke</button>
+    <button class="btn-ghost" id="share-btn" title="Copy joke">📋 Copy</button>
+  </div>
+
+  <!-- Ad slot mid -->
+  <div class="ad-slot" aria-hidden="true"><!-- AdSense Placeholder – Mid --><br/>📢 Ad Slot 2 (Mid)<br/><small>AdSense code goes here</small></div>
+
+  <p style="font-size:0.8rem;color:var(--text-muted);text-align:center">
+    Powered by <a href="https://v2.jokeapi.dev" target="_blank" rel="noopener noreferrer" style="color:var(--accent)">JokeAPI</a> &amp; DRAGON-IA
+  </p>
+
+  <!-- Ad slot bottom -->
+  <div class="ad-slot" aria-hidden="true"><!-- AdSense Placeholder – Bottom --><br/>📢 Ad Slot 3 (Bottom)<br/><small>AdSense code goes here</small></div>
+</main>
+<footer>DRAGON-IA Joke Generator – <span id="joke-count">0</span> jokes loaded this session</footer>
+
+<script>
+  // ── Theme ──────────────────────────────────────────────────────────────────
+  const body = document.body;
+  const savedTheme = localStorage.getItem('dragon_theme') || 'dark';
+  body.dataset.theme = savedTheme;
+  document.getElementById('theme-btn').textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+  document.getElementById('theme-btn').addEventListener('click', () => {
+    const next = body.dataset.theme === 'dark' ? 'light' : 'dark';
+    body.dataset.theme = next;
+    localStorage.setItem('dragon_theme', next);
+    document.getElementById('theme-btn').textContent = next === 'dark' ? '🌙' : '☀️';
+  });
+
+  // ── Ads toggle ─────────────────────────────────────────────────────────────
+  const adsEnabled = localStorage.getItem('dragon_ads') !== 'false';
+  const adToggle   = document.getElementById('ad-toggle');
+  adToggle.checked = adsEnabled;
+  if (!adsEnabled) body.classList.add('ads-hidden');
+  adToggle.addEventListener('change', () => {
+    const en = adToggle.checked;
+    localStorage.setItem('dragon_ads', en ? 'true' : 'false');
+    body.classList.toggle('ads-hidden', !en);
+  });
+
+  // ── Joke counter ───────────────────────────────────────────────────────────
+  let jokeCount = 0;
+
+  // ── Render joke ────────────────────────────────────────────────────────────
+  const card = document.getElementById('joke-card');
+  const emojis = ['🎭','😂','🤣','😄','🥁','🐉','🤖','🎪'];
+
+  function renderJoke(joke) {
+    const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+    card.innerHTML = '';
+    const emojiEl = document.createElement('div');
+    emojiEl.className = 'joke-emoji';
+    emojiEl.textContent = emoji;
+    const catEl = document.createElement('div');
+    catEl.className = 'joke-category';
+    catEl.textContent = joke.category;
+    card.appendChild(emojiEl);
+    card.appendChild(catEl);
+    if (joke.type === 'twopart') {
+      const setupEl = document.createElement('div');
+      setupEl.className = 'joke-setup';
+      setupEl.textContent = joke.setup;
+      const deliveryEl = document.createElement('div');
+      deliveryEl.className = 'joke-delivery';
+      deliveryEl.textContent = '🥁 ' + joke.delivery;
+      card.appendChild(setupEl);
+      card.appendChild(deliveryEl);
+    } else {
+      const jokeEl = document.createElement('div');
+      jokeEl.className = 'joke-single';
+      jokeEl.textContent = joke.joke;
+      card.appendChild(jokeEl);
+    }
+    jokeCount++;
+    document.getElementById('joke-count').textContent = jokeCount;
+  }
+
+  // ── Fetch joke from JokeAPI ────────────────────────────────────────────────
+  async function fetchJoke() {
+    const category  = document.getElementById('category-select').value || 'Any';
+    const safeFlags = 'blacklistFlags=nsfw,racist,sexist,explicit';
+    card.innerHTML  = '<div class="loading">Fetching a joke…</div>';
+    try {
+      const res  = await fetch(`https://v2.jokeapi.dev/joke/${encodeURIComponent(category)}?${safeFlags}&type=single,twopart`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (data.error) throw new Error(data.message || 'JokeAPI error');
+      renderJoke(data);
+    } catch (err) {
+      // Fallback: ask DRAGON-IA backend
+      try {
+        const res  = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: `Tell me a short, family-friendly ${category} joke.`, sessionId: 'joke-session' }),
+        });
+        const data = await res.json();
+        renderJoke({ type: 'single', category, joke: data.reply || 'No joke available.' });
+      } catch {
+        card.innerHTML = '<div class="loading">⚠️ Could not load a joke. Try again!</div>';
+      }
+    }
+  }
+
+  document.getElementById('joke-btn').addEventListener('click', fetchJoke);
+
+  document.getElementById('share-btn').addEventListener('click', () => {
+    const text = card.innerText.replace(/\n+/g, ' ').trim();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('share-btn');
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => { btn.textContent = '📋 Copy'; }, 1500);
+      });
+    }
+  });
+
+  // Load first joke on open
+  fetchJoke();
+
+  // ── Service Worker ─────────────────────────────────────────────────────────
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+  }
+</script>
+</body>
+</html>

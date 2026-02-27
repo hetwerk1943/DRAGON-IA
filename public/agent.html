@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws: wss:;" />
+  <meta name="description" content="DRAGON-IA – Multi-Agent Dashboard" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <title>DRAGON-IA Agents</title>
+  <link rel="manifest" href="/manifest.json" />
+  <style>
+    :root {
+      --bg: #1a1a2e; --surface: #16213e; --primary: #0f3460; --accent: #e94560;
+      --text: #eaeaea; --text-muted: #888; --border: #2a2a4a; --shadow: rgba(0,0,0,0.4);
+      --green: #2ecc71; --orange: #f39c12; --red: #e74c3c; --blue: #3498db;
+    }
+    [data-theme="light"] {
+      --bg: #f4f6fb; --surface: #ffffff; --primary: #4a6cf7; --accent: #e94560;
+      --text: #1a1a2e; --text-muted: #666; --border: #dde1ef; --shadow: rgba(0,0,0,0.1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: 1px; }
+    header h1 span { color: var(--accent); }
+    .header-actions { display: flex; gap: 0.5rem; align-items: center; }
+    button { cursor: pointer; border: none; border-radius: 6px; padding: 0.4rem 0.9rem; font-size: 0.85rem; transition: opacity .2s; }
+    button:hover { opacity: 0.85; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-ghost   { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+    .nav-link { font-size: 0.8rem; color: var(--text-muted); text-decoration: none; padding: 0.3rem 0.6rem; border-radius: 6px; border: 1px solid var(--border); }
+    .nav-link:hover { color: var(--text); background: var(--primary); border-color: var(--primary); }
+    .ad-toggle-label { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--text-muted); cursor: pointer; }
+    .ad-toggle-label input { width: 0; height: 0; opacity: 0; position: absolute; }
+    .ad-toggle-slider { width: 32px; height: 18px; background: var(--border); border-radius: 9px; position: relative; transition: background .2s; }
+    .ad-toggle-slider::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: #fff; border-radius: 50%; transition: transform .2s; }
+    .ad-toggle-label input:checked + .ad-toggle-slider { background: var(--primary); }
+    .ad-toggle-label input:checked + .ad-toggle-slider::after { transform: translateX(14px); }
+    /* Layout */
+    .page { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; }
+    /* Agent card */
+    .agent-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .agent-card-header { display: flex; align-items: center; justify-content: space-between; }
+    .agent-name { font-weight: 700; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .status-badge { font-size: 0.72rem; padding: 0.2rem 0.55rem; border-radius: 20px; font-weight: 600; }
+    .status-idle    { background: var(--border); color: var(--text-muted); }
+    .status-running { background: var(--blue); color: #fff; animation: pulse 1s infinite; }
+    .status-done    { background: var(--green); color: #fff; }
+    .status-error   { background: var(--red); color: #fff; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+    .agent-desc { font-size: 0.82rem; color: var(--text-muted); }
+    .result-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem; font-size: 0.78rem; max-height: 320px; overflow-y: auto; white-space: pre-wrap; font-family: 'Courier New', monospace; color: var(--text); }
+    /* Run all */
+    .controls { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
+    .ws-status { font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem; }
+    .ws-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
+    .ws-dot.connected { background: var(--green); }
+    /* Log */
+    .log-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-top: 1.25rem; }
+    .log-panel h2 { font-size: 0.9rem; margin-bottom: 0.75rem; }
+    #ws-log { max-height: 180px; overflow-y: auto; font-size: 0.75rem; font-family: monospace; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.2rem; }
+    /* Ad slots */
+    .ad-slot { background: repeating-linear-gradient(45deg, var(--border) 0, var(--border) 1px, transparent 0, transparent 50%) 0 0 / 8px 8px; border: 1px dashed var(--border); border-radius: 6px; padding: 0.75rem; text-align: center; font-size: 0.75rem; color: var(--text-muted); margin: 0.5rem 0; }
+    .ads-hidden .ad-slot { display: none; }
+  </style>
+</head>
+<body data-theme="dark">
+<header>
+  <h1>🐉 <span>DRAGON</span>-IA Agents</h1>
+  <div class="header-actions">
+    <a href="/" class="nav-link">Chat</a>
+    <button class="btn-ghost" id="theme-btn" aria-label="Toggle theme">🌙</button>
+    <label class="ad-toggle-label" title="Toggle ads">
+      <input type="checkbox" id="ad-toggle" role="switch" aria-label="Toggle ads" />
+      <span class="ad-toggle-slider"></span>
+      Ads
+    </label>
+  </div>
+</header>
+
+<main class="page">
+  <!-- Ad slot top -->
+  <div class="ad-slot" aria-hidden="true"><!-- AdSense Placeholder – Top Banner --><br/>📢 Ad Slot 1 (Top)<br/><small>AdSense code goes here</small></div>
+
+  <div class="controls">
+    <button class="btn-primary" id="run-all-btn">▶ Run All Agents</button>
+    <button class="btn-ghost" id="refresh-btn">↻ Refresh Status</button>
+    <span class="ws-status"><span class="ws-dot" id="ws-dot"></span><span id="ws-label">Disconnected</span></span>
+  </div>
+
+  <div class="grid" id="agent-grid">
+    <!-- Repo Agent -->
+    <div class="agent-card" id="card-repo">
+      <div class="agent-card-header">
+        <div class="agent-name">📁 Repo Agent</div>
+        <span class="status-badge status-idle" id="status-repo">Idle</span>
+      </div>
+      <div class="agent-desc">Analyses repository structure, file sizes, and generates recommendations.</div>
+      <button class="btn-ghost" id="run-repo-btn">Run</button>
+      <div class="result-box" id="result-repo">No results yet.</div>
+    </div>
+
+    <!-- Test Agent -->
+    <div class="agent-card" id="card-test">
+      <div class="agent-card-header">
+        <div class="agent-name">🧪 Test Agent</div>
+        <span class="status-badge status-idle" id="status-test">Idle</span>
+      </div>
+      <div class="agent-desc">Runs JSON validation, JS syntax checks, and package.json lint.</div>
+      <button class="btn-ghost" id="run-test-btn">Run</button>
+      <div class="result-box" id="result-test">No results yet.</div>
+    </div>
+
+    <!-- Sec Agent -->
+    <div class="agent-card" id="card-sec">
+      <div class="agent-card-header">
+        <div class="agent-name">🔒 Security Agent</div>
+        <span class="status-badge status-idle" id="status-sec">Idle</span>
+      </div>
+      <div class="agent-desc">Checks HTML files for CSP, SRI, XSS vectors, PWA, and meta tags.</div>
+      <button class="btn-ghost" id="run-sec-btn">Run</button>
+      <div class="result-box" id="result-sec">No results yet.</div>
+    </div>
+  </div>
+
+  <!-- Ad slot mid -->
+  <div class="ad-slot" aria-hidden="true"><!-- AdSense Placeholder – Mid Banner --><br/>📢 Ad Slot 2 (Mid)<br/><small>AdSense code goes here</small></div>
+
+  <div class="log-panel">
+    <h2>📡 WebSocket Log</h2>
+    <div id="ws-log" aria-live="polite" aria-label="WebSocket events"></div>
+  </div>
+
+  <!-- Ad slot bottom -->
+  <div class="ad-slot" aria-hidden="true"><!-- AdSense Placeholder – Bottom Banner --><br/>📢 Ad Slot 3 (Bottom)<br/><small>AdSense code goes here</small></div>
+</main>
+
+<script>
+  // ── Theme ──────────────────────────────────────────────────────────────────
+  const body = document.body;
+  const savedTheme = localStorage.getItem('dragon_theme') || 'dark';
+  body.dataset.theme = savedTheme;
+  document.getElementById('theme-btn').textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+  document.getElementById('theme-btn').addEventListener('click', () => {
+    const next = body.dataset.theme === 'dark' ? 'light' : 'dark';
+    body.dataset.theme = next;
+    localStorage.setItem('dragon_theme', next);
+    document.getElementById('theme-btn').textContent = next === 'dark' ? '🌙' : '☀️';
+  });
+
+  // ── Ads toggle ─────────────────────────────────────────────────────────────
+  const adsEnabled = localStorage.getItem('dragon_ads') !== 'false';
+  const adToggle   = document.getElementById('ad-toggle');
+  adToggle.checked = adsEnabled;
+  if (!adsEnabled) body.classList.add('ads-hidden');
+  adToggle.addEventListener('change', () => {
+    const en = adToggle.checked;
+    localStorage.setItem('dragon_ads', en ? 'true' : 'false');
+    body.classList.toggle('ads-hidden', !en);
+  });
+
+  // ── WebSocket ──────────────────────────────────────────────────────────────
+  const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  let ws;
+  const wsDot   = document.getElementById('ws-dot');
+  const wsLabel = document.getElementById('ws-label');
+  const wsLog   = document.getElementById('ws-log');
+
+  function wsLog_(msg) {
+    const el = document.createElement('div');
+    el.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+    wsLog.appendChild(el);
+    wsLog.scrollTop = wsLog.scrollHeight;
+  }
+
+  function connectWs() {
+    ws = new WebSocket(`${wsProtocol}//${location.host}`);
+    ws.onopen  = () => { wsDot.classList.add('connected'); wsLabel.textContent = 'Connected'; wsLog_('WebSocket connected'); };
+    ws.onclose = () => { wsDot.classList.remove('connected'); wsLabel.textContent = 'Disconnected'; setTimeout(connectWs, 3000); };
+    ws.onerror = () => wsLog_('WebSocket error');
+    ws.onmessage = e => {
+      const data = JSON.parse(e.data);
+      wsLog_(JSON.stringify(data));
+      handleWsEvent(data);
+    };
+  }
+  connectWs();
+
+  function handleWsEvent(data) {
+    if (data.type === 'agents:agent:start') {
+      setStatus(data.agent, 'running', 'Running…');
+    } else if (data.type === 'agents:agent:done') {
+      setStatus(data.agent, 'done', 'Done');
+      showResult(data.agent, data.result);
+    } else if (data.type === 'agents:agent:error') {
+      setStatus(data.agent, 'error', 'Error');
+      showResult(data.agent, { error: data.error });
+    }
+  }
+
+  function setStatus(agent, cls, label) {
+    const badge = document.getElementById(`status-${agent}`);
+    if (!badge) return;
+    badge.className = `status-badge status-${cls}`;
+    badge.textContent = label;
+  }
+
+  function showResult(agent, result) {
+    const box = document.getElementById(`result-${agent}`);
+    if (box) box.textContent = JSON.stringify(result, null, 2);
+  }
+
+  // ── Agent run ──────────────────────────────────────────────────────────────
+  async function runAgent(name) {
+    setStatus(name, 'running', 'Running…');
+    document.getElementById(`result-${name}`).textContent = 'Running…';
+    try {
+      await fetch('/agents/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agents: [name] }),
+      });
+    } catch (err) {
+      setStatus(name, 'error', 'Error');
+      document.getElementById(`result-${name}`).textContent = 'Request failed: ' + err.message;
+    }
+  }
+
+  document.getElementById('run-repo-btn').addEventListener('click', () => runAgent('repo'));
+  document.getElementById('run-test-btn').addEventListener('click', () => runAgent('test'));
+  document.getElementById('run-sec-btn').addEventListener('click',  () => runAgent('sec'));
+
+  document.getElementById('run-all-btn').addEventListener('click', async () => {
+    ['repo','test','sec'].forEach(a => { setStatus(a, 'running', 'Running…'); document.getElementById(`result-${a}`).textContent = 'Running…'; });
+    try {
+      await fetch('/agents/run', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ agents: ['repo','test','sec'] }) });
+    } catch (err) {
+      wsLog_('Run failed: ' + err.message);
+    }
+  });
+
+  document.getElementById('refresh-btn').addEventListener('click', async () => {
+    try {
+      const res  = await fetch('/agents/status');
+      const data = await res.json();
+      wsLog_('Status: ' + JSON.stringify(data.results || {}));
+      if (data.results) {
+        Object.entries(data.results).forEach(([k, v]) => {
+          setStatus(k, 'done', 'Done');
+          showResult(k, v);
+        });
+      }
+    } catch (err) { wsLog_('Refresh failed: ' + err.message); }
+  });
+
+  // ── Service Worker ─────────────────────────────────────────────────────────
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+  }
+</script>
+</body>
+</html>
