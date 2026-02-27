@@ -11,7 +11,13 @@ export const config = {
     url: process.env.REDIS_URL || 'redis://localhost:6379',
   },
   jwt: {
-    secret: process.env.JWT_SECRET || 'dev-secret-change-me',
+    secret: (() => {
+      const secret = process.env.JWT_SECRET;
+      if (!secret && process.env.NODE_ENV === 'production') {
+        throw new Error('JWT_SECRET must be set in production');
+      }
+      return secret || 'dev-secret-change-me';
+    })(),
     expiresIn: '24h',
   },
   openai: {

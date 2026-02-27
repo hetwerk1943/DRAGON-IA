@@ -46,12 +46,18 @@ export class ToolService {
       },
       handler: async (params) => {
         const expression = String(params.expression);
-        // Only allow safe math characters
-        if (!/^[0-9+\-*/().%\s]+$/.test(expression)) {
+        // Only allow digits, arithmetic operators, parentheses, decimal points, and whitespace
+        if (!/^[\d+\-*/().%\s]+$/.test(expression)) {
           throw new Error('Invalid mathematical expression');
         }
-        // Use Function constructor for safe math evaluation
-        const result = new Function(`"use strict"; return (${expression})`)();
+        if (expression.length > 100) {
+          throw new Error('Expression too long');
+        }
+        // Evaluate using indirect eval restricted to numeric expression
+        const result = Number(new Function(`"use strict"; return (${expression})`)());
+        if (!isFinite(result)) {
+          throw new Error('Expression result is not a finite number');
+        }
         return { expression, result };
       },
     });
