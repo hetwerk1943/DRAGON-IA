@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DRAGON-IA</title>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 1rem; background: #0d0d0d; color: #e0e0e0; }
+    h1 { text-align: center; color: #ff4500; }
+    .ad-banner { background: #1a1a1a; border: 1px dashed #444; padding: 0.5rem; text-align: center; margin: 0.5rem 0; display: none; }
+    #chatOutput { background: #1a1a1a; border: 1px solid #333; border-radius: 6px; min-height: 300px; padding: 1rem; margin: 1rem 0; overflow-y: auto; }
+    .user-msg { color: #4fc3f7; margin: 0.4rem 0; }
+    .ai-msg { color: #aed581; margin: 0.4rem 0; }
+    #inputRow { display: flex; gap: 0.5rem; }
+    #userInput { flex: 1; padding: 0.5rem; border-radius: 4px; border: 1px solid #444; background: #1a1a1a; color: #e0e0e0; }
+    button { padding: 0.5rem 1rem; border-radius: 4px; border: none; background: #ff4500; color: #fff; cursor: pointer; }
+    button:hover { background: #e03e00; }
+  </style>
+</head>
+<body>
+  <h1>DRAGON-IA</h1>
+
+  <div id="ad-top" class="ad-banner"></div>
+
+  <div id="chatOutput"></div>
+
+  <div id="ad-middle" class="ad-banner"></div>
+
+  <div id="inputRow">
+    <input id="userInput" type="text" placeholder="Napisz wiadomość…" onkeydown="if(event.key==='Enter')sendMessage()" />
+    <button onclick="sendMessage()">Wyślij</button>
+  </div>
+
+  <div id="ad-bottom" class="ad-banner"></div>
+
+  <script>
+    window.ADSENSE_ENABLED = false; // tryb OFF domyślnie
+
+    function applyAdSenseMode() {
+      const display = ADSENSE_ENABLED ? 'block' : 'none';
+      ['ad-top', 'ad-middle', 'ad-bottom'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.display = display;
+          if (!el.dataset.loaded) {
+            el.dataset.loaded = '1';
+            el.innerText = 'Reklama';
+          }
+        }
+      });
+    }
+
+    function sendMessage() {
+      const inputEl = document.getElementById('userInput');
+      const input = inputEl.value.trim();
+      if (!input) return;
+      const output = document.getElementById('chatOutput');
+
+      const userDiv = document.createElement('div');
+      userDiv.className = 'user-msg';
+      userDiv.textContent = input;
+      output.appendChild(userDiv);
+
+      const aiDiv = document.createElement('div');
+      aiDiv.className = 'ai-msg';
+      aiDiv.textContent = '[UltraChat AI Response]: ' + input.split('').reverse().join('');
+      output.appendChild(aiDiv);
+
+      inputEl.value = '';
+    }
+
+    // Apply AdSense mode on page load
+    applyAdSenseMode();
+  </script>
+</body>
+</html>
