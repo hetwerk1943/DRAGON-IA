@@ -1,0 +1,7 @@
+--- a/main.js
++++ b/main.js
+@@ -14,7 +14,7 @@
+ /* ── Ad state ──────────────────────────────────────────────────────────── */
+-let _adsEnabled = true;
++let _adsEnabled = localStorage.getItem('adsEnabled') !== 'false';
+ 

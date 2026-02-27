@@ -1,0 +1,337 @@
+/* ============================================================
+   UltraChat AI Omega – Global Styles
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-card: #21262d;
+  --border-color: #30363d;
+  --accent: #58a6ff;
+  --accent-hover: #79b8ff;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --danger: #f85149;
+  --success: #3fb950;
+  --ad-bg: #1c2128;
+  --ad-border: #388bfd55;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+header {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+header h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+nav a {
+  margin-left: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+nav a:hover {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+/* ── Main layout ─────────────────────────────────────────── */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+
+/* ── Chat window ─────────────────────────────────────────── */
+#chat-window {
+  flex: 1;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-y: auto;
+  min-height: 300px;
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.message {
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  max-width: 80%;
+  line-height: 1.5;
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.message.user {
+  background-color: var(--accent);
+  color: #000;
+  align-self: flex-end;
+}
+
+.message.assistant {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  align-self: flex-start;
+}
+
+.message.error {
+  background-color: #2d1010;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  align-self: flex-start;
+}
+
+/* ── Input row ───────────────────────────────────────────── */
+#input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+#user-input {
+  flex: 1;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 0.6rem 0.9rem;
+  font-size: 0.95rem;
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#user-input:focus {
+  border-color: var(--accent);
+}
+
+button {
+  background-color: var(--accent);
+  border: none;
+  border-radius: 6px;
+  color: #000;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.6rem 1.1rem;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+button:hover {
+  background-color: var(--accent-hover);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+button.secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background-color: var(--bg-card);
+}
+
+button.danger {
+  background-color: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+button.danger:hover {
+  background-color: var(--danger);
+  color: #fff;
+}
+
+/* ── Ad Banner ───────────────────────────────────────────── */
+.ad-banner {
+  background-color: var(--ad-bg);
+  border: 1px solid var(--ad-border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  transition: opacity 0.3s;
+}
+
+.ad-banner.hidden {
+  display: none;
+}
+
+.ad-banner span {
+  flex: 1;
+}
+
+.ad-banner a {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.ad-banner .ad-close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 0.25rem;
+  line-height: 1;
+}
+
+.ad-banner .ad-close:hover {
+  color: var(--text-primary);
+  background: transparent;
+}
+
+/* ── Cards (agent dashboard) ─────────────────────────────── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: border-color 0.2s;
+}
+
+.card:hover {
+  border-color: var(--accent);
+}
+
+.card h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.card p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+/* ── Status badge ────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge.online {
+  background-color: #1a3a22;
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.badge.offline {
+  background-color: #2d1010;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+/* ── Footer ─────────────────────────────────────────────── */
+footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-color);
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  nav a {
+    margin-left: 0;
+    margin-right: 0.75rem;
+  }
+
+  main {
+    padding: 1rem;
+  }
+
+  #chat-window {
+    max-height: 50vh;
+  }
+
+  .message {
+    max-width: 95%;
+  }
+
+  .ad-banner {
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
