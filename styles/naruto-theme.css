@@ -1,0 +1,120 @@
+/*
+ * 🎨 Paleta kolorów Naruto
+ *
+ * Naruto-inspired color palette for DRAGON-IA application.
+ * Colors are defined as CSS custom properties for easy reuse.
+ */
+
+:root {
+  /* Tło aplikacji – Mroczne tło nocy w wiosce Konohy */
+  --color-background: #1C1C1C;
+
+  /* Nagłówki (h1, h2) – Pomarańczowa kurtka Naruto */
+  --color-heading: #FF7F50;
+
+  /* Tekst główny (p, span) – Jasny kontrast na ciemnym tle */
+  --color-text: #F5F5F5;
+
+  /* Akcenty / przyciski – Intensywna pomarańcz / energia */
+  --color-accent: #FF4500;
+
+  /* Linki i hover – Zielony jak liście w wiosce */
+  --color-link: #32CD32;
+
+  /* Ostrzeżenia / alerty – Czerwone, jak symbole walki */
+  --color-alert: #FF0000;
+
+  /* Karty / sekcje – Ciemny popiel dla oddzielenia bloków */
+  --color-card: #2E2E2E;
+
+  /* Tło banerów reklam SAFE AdSense – Styl Naruto */
+  --color-banner: #FFA500;
+
+  /* Cienie i border – Kolory drewna, dojo */
+  --color-border: #8B4513;
+
+  /* Footer / stopka – Neutralne ciemne zakończenie */
+  --color-footer: #0D1117;
+}
+
+/* ── Base ── */
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  margin: 0;
+  font-family: sans-serif;
+}
+
+/* ── Headings ── */
+h1,
+h2 {
+  color: var(--color-heading);
+}
+
+/* ── Body text ── */
+p,
+span {
+  color: var(--color-text);
+}
+
+/* ── Links ── */
+a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-link);
+  text-decoration: underline;
+  filter: brightness(1.2);
+}
+
+/* ── Buttons ── */
+button,
+.btn {
+  background-color: var(--color-accent);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+}
+
+button:hover,
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* ── Cards / sections ── */
+.card,
+section {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(139, 69, 19, 0.3);
+  padding: 1em;
+}
+
+/* ── Alerts ── */
+.alert {
+  background-color: var(--color-alert);
+  color: var(--color-text);
+  padding: 0.75em 1em;
+  border-radius: 4px;
+}
+
+/* ── Ad banners ── */
+.banner-ad {
+  background-color: var(--color-banner);
+  color: var(--color-background);
+  padding: 1em;
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* ── Footer ── */
+footer {
+  background-color: var(--color-footer);
+  color: var(--color-text);
+  padding: 1em;
+}
