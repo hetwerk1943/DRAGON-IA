@@ -1,0 +1,38 @@
+name: Nightly Scan & Patch Proposals
+
+on:
+  schedule:
+    - cron: "0 2 * * *"   # 02:00 UTC every night
+  workflow_dispatch:
+
+jobs:
+  nightly-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint (full report)
+        run: npx eslint . --ext .js --format json --output-file eslint-report.json || true
+
+      - name: npm audit (full)
+        run: npm audit --json > npm-audit-report.json || true
+
+      - name: Upload security reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-security-reports
+          path: |
+            eslint-report.json
+            npm-audit-report.json
+          retention-days: 30
