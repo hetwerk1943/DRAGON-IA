@@ -1,0 +1,16 @@
+{
+  "name": "ultrachat-ai-omega",
+  "version": "1.0.0",
+  "description": "UltraChat AI Omega – chatbot UI with PWA support, repo agent, and quiz module",
+  "main": "main.js",
+  "scripts": {
+    "start": "npx serve .",
+    "lint": "npx eslint *.js web/**/*.js"
+  },
+  "keywords": ["ai", "chatbot", "pwa", "dragon-ia"],
+  "license": "MPL-2.0",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "serve": "^14.2.3"
+  }
+}

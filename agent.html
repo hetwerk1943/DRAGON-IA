@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="UltraChat AI Omega – panel agenta do analizy i naprawy repozytorium" />
+  <title>Agent Naprawczy – UltraChat AI Omega</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#58a6ff" />
+  <style>
+    .agent-status-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+    }
+    .agent-status-bar .badge {
+      background: var(--accent-dark);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .input-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .input-row input[type="text"] {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 0.875rem;
+      padding: 0.5rem 0.75rem;
+      outline: none;
+    }
+    .input-row input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+    .quiz-feedback--correct { color: var(--success); }
+    .quiz-feedback--wrong   { color: var(--danger);  }
+  </style>
+</head>
+<body>
+
+  <!-- Top navigation -->
+  <nav class="navbar" aria-label="Główna nawigacja">
+    <span class="navbar__brand">🐉 UltraChat AI Omega</span>
+    <div class="navbar__links">
+      <a href="index.html">Chat</a>
+      <a href="agent.html" class="active" aria-current="page">Agent</a>
+      <a href="web/repo-agent/index.html">Repo Agent</a>
+      <a href="web/joke-generator/index.html">Żarty</a>
+    </div>
+  </nav>
+
+  <!-- Top AdSense banner -->
+  <div class="ad-banner ad-banner--leaderboard" aria-hidden="true">REKLAMA – 728×90</div>
+
+  <div class="layout" style="grid-template-columns:1fr">
+    <main class="main-content" aria-label="Panel agenta">
+
+      <h1 style="font-size:1.2rem;font-weight:700">🔧 Agent Analizy & Naprawy Repozytorium</h1>
+
+      <!-- Status bar -->
+      <div class="agent-status-bar">
+        <span class="badge" id="agent-badge">Gotowy</span>
+        <span id="agent-status-text">Wprowadź URL repozytorium i uruchom analizę.</span>
+      </div>
+
+      <!-- Repo URL input -->
+      <div class="panel">
+        <p class="panel__title">Repozytorium</p>
+        <div class="input-row">
+          <input
+            type="text"
+            id="repo-url-input"
+            placeholder="https://github.com/owner/repo"
+            aria-label="URL repozytorium GitHub"
+          />
+          <button class="btn btn--primary" id="analyze-btn">🔍 Analizuj</button>
+          <button class="btn btn--secondary" id="auto-fix-btn" disabled>⚡ Auto-napraw</button>
+        </div>
+      </div>
+
+      <!-- Two-column: log + patches -->
+      <div class="agent-grid">
+
+        <!-- Diagnostic log -->
+        <div class="panel" style="grid-column:1">
+          <p class="panel__title">Dziennik diagnostyczny</p>
+          <div id="agent-log" class="agent-log" aria-live="polite" role="log" aria-label="Dziennik agenta">
+Oczekiwanie na zadanie…
+          </div>
+          <div class="mt-1" style="display:flex;gap:0.5rem">
+            <button class="btn btn--secondary" id="clear-log-btn">🗑️ Wyczyść dziennik</button>
+          </div>
+        </div>
+
+        <!-- Patch list -->
+        <div class="panel" style="grid-column:2">
+          <p class="panel__title">Zaproponowane łatki</p>
+          <div id="patch-list" class="patch-list" aria-label="Lista łatek" aria-live="polite">
+            <p class="text-muted" style="font-size:0.85rem">Brak łatek. Uruchom analizę.</p>
+          </div>
+          <div class="mt-1">
+            <button class="btn btn--danger" id="apply-patches-btn" disabled>✅ Zastosuj zaznaczone</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Patches folder info -->
+      <div class="panel">
+        <p class="panel__title">Folder <code>patches/</code></p>
+        <p style="font-size:0.85rem;color:var(--text-muted)">
+          Wygenerowane pliki patch są zapisywane w folderze
+          <strong>patches/</strong> w korzeniu projektu.
+          Każdy plik ma format <code>YYYY-MM-DD_HH-mm_opisProblemu.patch</code>.
+        </p>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Bottom AdSense banner -->
+  <div class="ad-banner ad-banner--leaderboard" aria-hidden="true">REKLAMA – 728×90</div>
+
+  <footer>
+    <p>© 2024 DRAGON-IA · UltraChat AI Omega · <a href="https://mozilla.org/MPL/2.0/" target="_blank" rel="noopener">MPL-2.0</a></p>
+  </footer>
+
+  <script>
+    'use strict';
+
+    /* ── DOM refs ──────────────────────────────────────────────────── */
+    const analyzeBtn    = document.getElementById('analyze-btn');
+    const autoFixBtn    = document.getElementById('auto-fix-btn');
+    const applyBtn      = document.getElementById('apply-patches-btn');
+    const clearLogBtn   = document.getElementById('clear-log-btn');
+    const repoInput     = document.getElementById('repo-url-input');
+    const logEl         = document.getElementById('agent-log');
+    const patchListEl   = document.getElementById('patch-list');
+    const badgeEl       = document.getElementById('agent-badge');
+    const statusTextEl  = document.getElementById('agent-status-text');
+
+    /* ── Helpers ───────────────────────────────────────────────────── */
+    function log(msg, type = '') {
+      const span = document.createElement('span');
+      span.className = type ? `log-${type}` : '';
+      span.textContent = `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+      logEl.appendChild(span);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function setStatus(text, badge) {
+      statusTextEl.textContent = text;
+      badgeEl.textContent = badge;
+    }
+
+    function addPatch(filename, description) {
+      if (patchListEl.querySelector('p')) patchListEl.innerHTML = '';
+
+      const item = document.createElement('div');
+      item.className = 'patch-item';
+
+      const label = document.createElement('label');
+      label.style.cssText = 'display:flex;align-items:center;gap:0.5rem;cursor:pointer';
+
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = true;
+      cb.dataset.patchFile = filename;
+      cb.addEventListener('change', updateApplyBtn);
+
+      label.appendChild(cb);
+      label.appendChild(document.createTextNode(description));
+
+      const statusSpan = document.createElement('span');
+      statusSpan.className = 'patch-item__status';
+      statusSpan.textContent = 'oczekuje';
+
+      item.appendChild(label);
+      item.appendChild(statusSpan);
+      patchListEl.appendChild(item);
+      updateApplyBtn();
+    }
+
+    function updateApplyBtn() {
+      const any = patchListEl.querySelectorAll('input[type=checkbox]:checked').length > 0;
+      applyBtn.disabled = !any;
+    }
+
+    /* ── Simulated analysis (frontend demo) ───────────────────────── */
+    async function runAnalysis() {
+      const url = repoInput.value.trim();
+      if (!url) { log('Podaj URL repozytorium.', 'error'); return; }
+
+      analyzeBtn.disabled = true;
+      autoFixBtn.disabled = true;
+      applyBtn.disabled   = true;
+      patchListEl.innerHTML = '';
+      setStatus('Analiza w toku…', 'Analiza');
+      log(`Rozpoczynam analizę: ${url}`);
+
+      /* Simulated async steps */
+      await delay(600);  log('Klonowanie metadanych repozytorium…');
+      await delay(700);  log('Skanowanie plików źródłowych…');
+      await delay(500);  log('Wykryto: brak pliku manifest.json', 'warning');
+      await delay(400);  log('Wykryto: brak service-worker.js', 'warning');
+      await delay(600);  log('Wykryto: nieaktualne zależności w package.json', 'warning');
+      await delay(500);  log('Analiza zakończona. Znaleziono 3 problemy.', 'info');
+
+      addPatch('2024-01-01_add-manifest.patch',     'Dodaj manifest.json (PWA)');
+      addPatch('2024-01-01_add-sw.patch',           'Dodaj service-worker.js (offline)');
+      addPatch('2024-01-01_update-deps.patch',      'Aktualizuj zależności npm');
+
+      setStatus('Analiza zakończona. Zaznacz łatki i kliknij „Zastosuj".', 'Gotowy');
+      analyzeBtn.disabled = false;
+      autoFixBtn.disabled = false;
+    }
+
+    async function autoFix() {
+      autoFixBtn.disabled = true;
+      log('Auto-naprawa: zaznaczam wszystkie łatki…');
+      patchListEl.querySelectorAll('input[type=checkbox]').forEach(cb => { cb.checked = true; });
+      updateApplyBtn();
+      await applyPatches();
+    }
+
+    async function applyPatches() {
+      const checked = [...patchListEl.querySelectorAll('input[type=checkbox]:checked')];
+      if (!checked.length) return;
+
+      applyBtn.disabled = true;
+      setStatus('Stosowanie łatek…', 'Naprawa');
+
+      for (const cb of checked) {
+        const file = cb.dataset.patchFile;
+        log(`Stosowanie: ${file}…`);
+        await delay(800);
+        log(`Zastosowano: ${file}`, 'info');
+        const item = cb.closest('.patch-item');
+        const span = item && item.querySelector('.patch-item__status');
+        if (span) { span.textContent = '✅ zastosowano'; span.style.color = 'var(--success)'; }
+        cb.disabled = true;
+      }
+
+      setStatus('Wszystkie zaznaczone łatki zastosowane.', 'Gotowy');
+      log('Naprawa zakończona pomyślnie.', 'info');
+      autoFixBtn.disabled = false;
+    }
+
+    function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    /* ── Event listeners ───────────────────────────────────────────── */
+    analyzeBtn.addEventListener('click', runAnalysis);
+    autoFixBtn.addEventListener('click', autoFix);
+    applyBtn.addEventListener('click', applyPatches);
+    clearLogBtn.addEventListener('click', () => { logEl.textContent = 'Dziennik wyczyszczony.\n'; });
+
+    /* ── PWA SW ────────────────────────────────────────────────────── */
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
