@@ -292,7 +292,7 @@ function toBase64(file) {
 }
 
 function parseCodeBlock(arg) {
-  const m = arg.match(/^```(\w+)\n([\s\S]+?)```?$/);
+  const m = arg.match(/^```(\w+)\n([\s\S]+?)```$/);
   if (m) return { language: m[1], code: m[2] };
   return { language: 'javascript', code: arg };
 }
@@ -406,9 +406,10 @@ function toggleTTS() {
 function speakText(text) {
   if (!window.speechSynthesis) return;
   speechSynthesis.cancel();
+  const MAX_TTS_CHARS = 600;
   const tmp = document.createElement('div');
   tmp.innerHTML = text;
-  const plain = (tmp.textContent || tmp.innerText || '').slice(0, 600);
+  const plain = (tmp.textContent || tmp.innerText || '').slice(0, MAX_TTS_CHARS);
   const u = new SpeechSynthesisUtterance(plain);
   u.lang = 'pl-PL';
   speechSynthesis.speak(u);

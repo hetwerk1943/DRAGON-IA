@@ -40,7 +40,8 @@ function runBackup() {
   }
 }
 const BACKUP_INTERVAL_MS = parseInt(process.env.BACKUP_INTERVAL_HOURS || '24', 10) * 60 * 60 * 1000;
-setInterval(runBackup, BACKUP_INTERVAL_MS);
+const backupTimer = setInterval(runBackup, BACKUP_INTERVAL_MS);
+['SIGINT', 'SIGTERM'].forEach(sig => process.on(sig, () => { clearInterval(backupTimer); process.exit(0); }));
 
 // ── In-memory stats ───────────────────────────────────────────────────────
 const stats = { totalMessages: 0, totalImages: 0, errors: 0, startedAt: new Date().toISOString() };
@@ -243,7 +244,7 @@ app.post('/lint', async (req, res) => {
   if (!code || typeof code !== 'string') return res.status(400).json({ error: 'Brak kodu' });
   if (language === 'json') {
     try { JSON.parse(code); return res.json({ result: '✅ JSON jest poprawny.' }); }
-    catch (e) { return res.json({ result: `❌ Błąd JSON: nieprawidłowa składnia` }); }
+    catch (e) { return res.json({ result: `❌ Błąd JSON: ${e.message}` }); }
   }
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -296,7 +297,7 @@ app.post('/fix-code', async (req, res) => {
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content || '{}';
     try { res.json(JSON.parse(content)); }
-    catch { res.json({ fixed: content, explanation: '' }); }
+    catch (e) { console.warn('/fix-code: AI response not valid JSON, returning raw:', e.message); res.json({ fixed: content, explanation: '', warning: 'Odpowiedź AI nie była w oczekiwanym formacie JSON.' }); }
   } catch (err) { console.error(err); res.status(500).json({ error: 'Błąd serwera' }); }
 });
 
