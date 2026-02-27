@@ -22,7 +22,7 @@ class TestOrchestrator:
     def test_successful_chat(self):
         orch = _make_orchestrator()
         req = OrchestrationRequest(session_id="s1", prompt="hi")
-        resp = asyncio.get_event_loop().run_until_complete(orch.handle(req))
+        resp = asyncio.run(orch.handle(req))
         assert resp.success is True
         assert resp.data["model"] == "test-model"
 
@@ -30,7 +30,7 @@ class TestOrchestrator:
         orch = _make_orchestrator()
         orch.guard.add_blocked_pattern("blocked")
         req = OrchestrationRequest(session_id="s1", prompt="this is blocked content")
-        resp = asyncio.get_event_loop().run_until_complete(orch.handle(req))
+        resp = asyncio.run(orch.handle(req))
         assert resp.success is False
 
     def test_tool_invocation(self):
@@ -43,22 +43,22 @@ class TestOrchestrator:
         req = OrchestrationRequest(
             session_id="s1", prompt="", tool_name="echo", tool_kwargs={"text": "hello"}
         )
-        resp = asyncio.get_event_loop().run_until_complete(orch.handle(req))
+        resp = asyncio.run(orch.handle(req))
         assert resp.success is True
         assert resp.data["tool_result"] == "hello"
 
     def test_missing_tool(self):
         orch = _make_orchestrator()
         req = OrchestrationRequest(session_id="s1", prompt="", tool_name="nope")
-        resp = asyncio.get_event_loop().run_until_complete(orch.handle(req))
+        resp = asyncio.run(orch.handle(req))
         assert resp.success is False
 
     def test_memory_persists_across_calls(self):
         orch = _make_orchestrator()
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             orch.handle(OrchestrationRequest(session_id="s1", prompt="first"))
         )
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             orch.handle(OrchestrationRequest(session_id="s1", prompt="second"))
         )
         entries = orch.memory.recall("s1")
@@ -68,6 +68,6 @@ class TestOrchestrator:
     def test_no_model_for_capability(self):
         orch = _make_orchestrator()
         req = OrchestrationRequest(session_id="s1", prompt="draw", capability="image")
-        resp = asyncio.get_event_loop().run_until_complete(orch.handle(req))
+        resp = asyncio.run(orch.handle(req))
         assert resp.success is False
         assert "No model available" in resp.error

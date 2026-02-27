@@ -27,12 +27,12 @@ class TestModelRouter:
     def test_route_success(self):
         router = ModelRouter()
         router.register(ModelSpec(name="m1", provider="p", capabilities=["chat"]))
-        result = asyncio.get_event_loop().run_until_complete(router.route("hi", "chat"))
+        result = asyncio.run(router.route("hi", "chat"))
         assert result["model"] == "m1"
 
     def test_route_no_model(self):
         router = ModelRouter()
-        result = asyncio.get_event_loop().run_until_complete(router.route("hi", "missing"))
+        result = asyncio.run(router.route("hi", "missing"))
         assert "error" in result
 
 
@@ -90,13 +90,13 @@ class TestToolRegistry:
             return a + b
 
         reg.register("add", "adds two numbers", add)
-        result = asyncio.get_event_loop().run_until_complete(reg.invoke("add", a=1, b=2))
+        result = asyncio.run(reg.invoke("add", a=1, b=2))
         assert result == 3
 
     def test_invoke_missing_tool(self):
         reg = ToolRegistry()
         with pytest.raises(KeyError):
-            asyncio.get_event_loop().run_until_complete(reg.invoke("nope"))
+            asyncio.run(reg.invoke("nope"))
 
 
 # ── Guard ───────────────────────────────────────────────────────────────

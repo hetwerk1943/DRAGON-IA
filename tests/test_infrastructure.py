@@ -16,24 +16,24 @@ from dragon_ia.infrastructure.logger import get_logger
 class TestDatabase:
     def test_set_and_get(self):
         db = Database()
-        asyncio.get_event_loop().run_until_complete(db.set("k", "v"))
-        assert asyncio.get_event_loop().run_until_complete(db.get("k")) == "v"
+        asyncio.run(db.set("k", "v"))
+        assert asyncio.run(db.get("k")) == "v"
 
     def test_get_missing_key(self):
         db = Database()
-        assert asyncio.get_event_loop().run_until_complete(db.get("nope")) is None
+        assert asyncio.run(db.get("nope")) is None
 
     def test_delete(self):
         db = Database()
-        asyncio.get_event_loop().run_until_complete(db.set("k", 1))
-        assert asyncio.get_event_loop().run_until_complete(db.delete("k")) is True
-        assert asyncio.get_event_loop().run_until_complete(db.get("k")) is None
+        asyncio.run(db.set("k", 1))
+        assert asyncio.run(db.delete("k")) is True
+        assert asyncio.run(db.get("k")) is None
 
     def test_keys(self):
         db = Database()
-        asyncio.get_event_loop().run_until_complete(db.set("a", 1))
-        asyncio.get_event_loop().run_until_complete(db.set("b", 2))
-        keys = asyncio.get_event_loop().run_until_complete(db.keys())
+        asyncio.run(db.set("a", 1))
+        asyncio.run(db.set("b", 2))
+        keys = asyncio.run(db.keys())
         assert sorted(keys) == ["a", "b"]
 
 
@@ -43,10 +43,9 @@ class TestDatabase:
 class TestVectorDB:
     def test_insert_and_search(self):
         vdb = VectorDB()
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(vdb.insert(VectorRecord(id="a", vector=[1.0, 0.0])))
-        loop.run_until_complete(vdb.insert(VectorRecord(id="b", vector=[0.0, 1.0])))
-        results = loop.run_until_complete(vdb.search([1.0, 0.0], top_k=1))
+        asyncio.run(vdb.insert(VectorRecord(id="a", vector=[1.0, 0.0])))
+        asyncio.run(vdb.insert(VectorRecord(id="b", vector=[0.0, 1.0])))
+        results = asyncio.run(vdb.search([1.0, 0.0], top_k=1))
         assert len(results) == 1
         assert results[0].id == "a"
 
@@ -65,20 +64,18 @@ class TestVectorDB:
 class TestCache:
     def test_set_and_get(self):
         c = Cache()
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(c.set("k", "v"))
-        assert loop.run_until_complete(c.get("k")) == "v"
+        asyncio.run(c.set("k", "v"))
+        assert asyncio.run(c.get("k")) == "v"
 
     def test_missing_key(self):
         c = Cache()
-        assert asyncio.get_event_loop().run_until_complete(c.get("x")) is None
+        assert asyncio.run(c.get("x")) is None
 
     def test_delete(self):
         c = Cache()
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(c.set("k", "v"))
-        assert loop.run_until_complete(c.delete("k")) is True
-        assert loop.run_until_complete(c.get("k")) is None
+        asyncio.run(c.set("k", "v"))
+        assert asyncio.run(c.delete("k")) is True
+        assert asyncio.run(c.get("k")) is None
 
 
 # ── MessageQueue ────────────────────────────────────────────────────────
@@ -87,10 +84,9 @@ class TestCache:
 class TestMessageQueue:
     def test_publish_and_consume(self):
         q = MessageQueue()
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(q.publish(Message(topic="t", payload="p")))
+        asyncio.run(q.publish(Message(topic="t", payload="p")))
         assert q.pending() == 1
-        msg = loop.run_until_complete(q.consume())
+        msg = asyncio.run(q.consume())
         assert msg.topic == "t"
         assert q.pending() == 0
 
