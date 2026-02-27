@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Repo Agent – UltraChat AI</title>
+  <style>
+    :root {
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-card: #21262d;
+      --border-color: #30363d;
+      --accent: #58a6ff;
+      --accent-hover: #79b8ff;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --danger: #f85149;
+      --success: #3fb950;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+    header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    header h1 { font-size: 1.2rem; font-weight: 600; color: var(--accent); }
+    nav a { margin-left: 1rem; font-size: 0.9rem; color: var(--text-secondary); }
+
+    main {
+      flex: 1;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      padding: 0.6rem 0.9rem;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus { border-color: var(--accent); }
+
+    button {
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      color: #000;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.6rem 1.1rem;
+      transition: background-color 0.2s, opacity 0.2s;
+    }
+
+    button:hover { background: var(--accent-hover); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    #result-area {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      min-height: 200px;
+    }
+
+    .repo-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      transition: border-color 0.2s;
+    }
+
+    .repo-card:hover { border-color: var(--accent); }
+
+    .repo-card h3 { font-size: 1rem; margin-bottom: 0.25rem; }
+    .repo-card h3 a { color: var(--accent); }
+    .repo-card p { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+
+    .repo-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      flex-wrap: wrap;
+    }
+
+    .repo-meta span { display: flex; align-items: center; gap: 0.25rem; }
+
+    #status {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      min-height: 1.2em;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border-color);
+    }
+
+    @media (max-width: 480px) {
+      main { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🔍 Repo Agent</h1>
+    <nav>
+      <a href="../../index.html">← Chat</a>
+      <a href="../../agent.html">Dashboard</a>
+    </nav>
+  </header>
+
+  <main>
+    <p style="color:var(--text-secondary); font-size:0.95rem;">
+      Wyszukaj repozytoria GitHub według słów kluczowych.
+    </p>
+
+    <div class="search-row">
+      <input
+        type="text"
+        id="repo-input"
+        placeholder="np. dragon ai, chatgpt local…"
+        aria-label="Szukaj repozytoriów"
+      />
+      <button id="search-btn" aria-label="Szukaj">🔍 Szukaj</button>
+    </div>
+
+    <p id="status" role="status" aria-live="polite"></p>
+
+    <div id="result-area" aria-live="polite" aria-label="Wyniki wyszukiwania">
+      <p style="color:var(--text-secondary); font-size:0.9rem;">Wpisz zapytanie i kliknij „Szukaj".</p>
+    </div>
+  </main>
+
+  <footer>
+    Dane pobierane z <a href="https://api.github.com" target="_blank" rel="noopener">GitHub API</a>
+  </footer>
+
+  <script src="agent.js"></script>
+</body>
+</html>

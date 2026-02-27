@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi-Agent Dashboard – UltraChat AI</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#58a6ff" />
+  <style>
+    .agent-controls {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .agent-log {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .agent-log p {
+      margin: 0.15rem 0;
+    }
+    .agent-log .log-info  { color: var(--accent); }
+    .agent-log .log-ok    { color: var(--success); }
+    .agent-log .log-error { color: var(--danger); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🐉 Multi-Agent Dashboard</h1>
+    <nav>
+      <a href="index.html">Chat</a>
+      <a href="agent.html">Multi-Agent</a>
+      <a href="web/joke-generator/index.html">Żarty</a>
+      <a href="web/repo-agent/index.html">Repo Agent</a>
+    </nav>
+  </header>
+
+  <!-- Ad Banner -->
+  <div class="ad-banner" id="ad-banner" role="complementary" aria-label="Baner reklamowy">
+    <span>📢 Wspieraj projekt – <a href="https://github.com/hetwerk1943/DRAGON-IA" target="_blank" rel="noopener">zostaw ⭐ na GitHub</a></span>
+    <button class="ad-close" aria-label="Zamknij baner">✕</button>
+  </div>
+
+  <main style="max-width:1100px;">
+    <h2 style="font-size:1rem; color:var(--text-secondary); margin-bottom:1rem;">
+      Zarządzaj agentami AI – uruchamiaj, zatrzymuj i monitoruj statusy w czasie rzeczywistym.
+    </h2>
+
+    <div class="card-grid" id="agent-grid">
+      <!-- Cards are injected by agent-dashboard.js -->
+    </div>
+
+    <div style="margin-top:1.5rem;">
+      <h3 style="font-size:0.95rem; margin-bottom:0.5rem; color:var(--text-secondary);">Log zdarzeń</h3>
+      <div class="agent-log" id="agent-log" role="log" aria-live="polite">
+        <p class="log-info">[system] Dashboard załadowany.</p>
+      </div>
+    </div>
+
+    <div class="agent-controls" style="margin-top:1rem;">
+      <button id="btn-start-all">▶ Uruchom wszystkie</button>
+      <button id="btn-stop-all" class="danger">■ Zatrzymaj wszystkie</button>
+      <button id="btn-clear-log" class="secondary">Wyczyść log</button>
+      <button id="ad-toggle" class="secondary" style="margin-left:auto;font-size:0.8rem;">Wyłącz reklamy</button>
+    </div>
+  </main>
+
+  <footer>
+    UltraChat AI Omega &copy; 2024 &mdash; <a href="index.html">Wróć do chatu</a>
+  </footer>
+
+  <script src="main.js"></script>
+  <script>
+    /* ── Agent definitions ──────────────────────────────────────────── */
+    const AGENTS = [
+      {
+        id: 'chat-agent',
+        name: 'Chat Agent',
+        description: 'Lokalny asystent ChatGPT – odpowiada na pytania użytkownika.',
+        link: 'index.html'
+      },
+      {
+        id: 'joke-agent',
+        name: 'Joke Generator',
+        description: 'Generuje losowe żarty i dowcipy korzystając z zewnętrznego API.',
+        link: 'web/joke-generator/index.html'
+      },
+      {
+        id: 'repo-agent',
+        name: 'Repo Agent',
+        description: 'Przegląda i analizuje repozytoria GitHub na żądanie.',
+        link: 'web/repo-agent/index.html'
+      },
+      {
+        id: 'quiz-agent',
+        name: 'Quiz Agent',
+        description: 'Interaktywny moduł quizów i testów wiedzy AI.',
+        link: 'index.html#quiz'
+      }
+    ];
+
+    const agentStatus = {};
+    AGENTS.forEach((a) => (agentStatus[a.id] = 'offline'));
+
+    /* ── Render cards ───────────────────────────────────────────────── */
+    function renderCards() {
+      const grid = document.getElementById('agent-grid');
+      grid.innerHTML = AGENTS.map((a) => `
+        <div class="card" id="card-${a.id}">
+          <h2>${a.name}</h2>
+          <p>${a.description}</p>
+          <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-top:0.5rem;">
+            <span class="badge ${agentStatus[a.id] === 'online' ? 'online' : 'offline'}" id="badge-${a.id}">
+              ${agentStatus[a.id] === 'online' ? 'online' : 'offline'}
+            </span>
+            <button onclick="toggleAgent('${a.id}')" id="btn-${a.id}" style="font-size:0.8rem; padding:0.3rem 0.75rem;">
+              ${agentStatus[a.id] === 'online' ? 'Zatrzymaj' : 'Uruchom'}
+            </button>
+            <a href="${a.link}" style="font-size:0.8rem; color:var(--accent);">Otwórz →</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* ── Log helper ─────────────────────────────────────────────────── */
+    function addLog(msg, type = 'info') {
+      const log = document.getElementById('agent-log');
+      const p = document.createElement('p');
+      p.className = `log-${type}`;
+      const ts = new Date().toLocaleTimeString('pl-PL');
+      p.textContent = `[${ts}] ${msg}`;
+      log.appendChild(p);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    /* ── Toggle agent ───────────────────────────────────────────────── */
+    function toggleAgent(id) {
+      const agent = AGENTS.find((a) => a.id === id);
+      if (!agent) return;
+      if (agentStatus[id] === 'offline') {
+        agentStatus[id] = 'online';
+        addLog(`${agent.name} uruchomiony.`, 'ok');
+      } else {
+        agentStatus[id] = 'offline';
+        addLog(`${agent.name} zatrzymany.`, 'error');
+      }
+      renderCards();
+    }
+
+    /* ── Bulk controls ──────────────────────────────────────────────── */
+    document.getElementById('btn-start-all').addEventListener('click', () => {
+      AGENTS.forEach((a) => {
+        if (agentStatus[a.id] !== 'online') {
+          agentStatus[a.id] = 'online';
+        }
+      });
+      addLog('Wszystkie agenty uruchomione.', 'ok');
+      renderCards();
+    });
+
+    document.getElementById('btn-stop-all').addEventListener('click', () => {
+      AGENTS.forEach((a) => (agentStatus[a.id] = 'offline'));
+      addLog('Wszystkie agenty zatrzymane.', 'error');
+      renderCards();
+    });
+
+    document.getElementById('btn-clear-log').addEventListener('click', () => {
+      document.getElementById('agent-log').innerHTML = '';
+      addLog('Log wyczyszczony.', 'info');
+    });
+
+    /* ── Init ───────────────────────────────────────────────────────── */
+    renderCards();
+  </script>
+</body>
+</html>

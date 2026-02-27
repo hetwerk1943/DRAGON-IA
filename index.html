@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UltraChat AI – Lokalny asystent</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#58a6ff" />
+</head>
+<body>
+
+  <header>
+    <h1>🐉 UltraChat AI Omega</h1>
+    <nav>
+      <a href="index.html">Chat</a>
+      <a href="agent.html">Multi-Agent</a>
+      <a href="web/joke-generator/index.html">Żarty</a>
+      <a href="web/repo-agent/index.html">Repo Agent</a>
+    </nav>
+  </header>
+
+  <!-- Ad Banner (ON by default; toggled via main.js) -->
+  <div class="ad-banner" id="ad-banner" role="complementary" aria-label="Baner reklamowy">
+    <span>📢 Wspieraj projekt – <a href="https://github.com/hetwerk1943/DRAGON-IA" target="_blank" rel="noopener">zostaw ⭐ na GitHub</a></span>
+    <button class="ad-close" aria-label="Zamknij baner">✕</button>
+  </div>
+
+  <main>
+    <div id="chat-window" role="log" aria-live="polite" aria-label="Historia czatu"></div>
+
+    <div id="input-row">
+      <textarea
+        id="user-input"
+        rows="2"
+        placeholder="Napisz wiadomość… (Enter = wyślij, Shift+Enter = nowa linia)"
+        aria-label="Wpisz wiadomość"
+      ></textarea>
+      <button id="send-btn" aria-label="Wyślij">Wyślij</button>
+      <button id="clear-btn" class="secondary" aria-label="Wyczyść czat">Wyczyść</button>
+    </div>
+
+    <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
+      <button id="ad-toggle" class="secondary" style="font-size:0.8rem;">Wyłącz reklamy</button>
+    </div>
+  </main>
+
+  <footer>
+    UltraChat AI Omega &copy; 2024 &mdash; <a href="agent.html">Multi-Agent Dashboard</a>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
