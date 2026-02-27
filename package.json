@@ -1,0 +1,14 @@
+{
+  "name": "dragon-ia",
+  "version": "1.0.0",
+  "description": "Backend + Frontend for DRAGON-IA chatbot powered by OpenAI API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/server.test.js"
+  },
+  "license": "MPL-2.0",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
