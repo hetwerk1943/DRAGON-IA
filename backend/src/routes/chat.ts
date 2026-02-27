@@ -31,11 +31,11 @@ router.post('/', authenticate, apiLimiter, async (req: AuthRequest, res: Respons
   }
 });
 
-router.get('/models', authenticate, (_req: AuthRequest, res: Response) => {
+router.get('/models', authenticate, apiLimiter, (_req: AuthRequest, res: Response) => {
   res.json(orchestrator.getAvailableModels());
 });
 
-router.get('/conversations', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/conversations', authenticate, apiLimiter, async (req: AuthRequest, res: Response) => {
   try {
     const conversations = await orchestrator.getMemoryService().getUserConversations(req.userId!);
     res.json(conversations);
@@ -44,7 +44,7 @@ router.get('/conversations', authenticate, async (req: AuthRequest, res: Respons
   }
 });
 
-router.get('/conversations/:id/history', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/conversations/:id/history', authenticate, apiLimiter, async (req: AuthRequest, res: Response) => {
   try {
     const history = await orchestrator.getMemoryService().getConversationHistory(
       req.userId!,
@@ -56,7 +56,7 @@ router.get('/conversations/:id/history', authenticate, async (req: AuthRequest, 
   }
 });
 
-router.delete('/conversations/:id', authenticate, async (req: AuthRequest, res: Response) => {
+router.delete('/conversations/:id', authenticate, apiLimiter, async (req: AuthRequest, res: Response) => {
   try {
     await orchestrator.getMemoryService().clearConversation(req.userId!, req.params.id as string);
     res.json({ success: true });
