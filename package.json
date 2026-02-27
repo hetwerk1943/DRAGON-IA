@@ -1,0 +1,12 @@
+{
+  "name": "dragonai",
+  "version": "1.0.0",
+  "description": "UltraChat AI Omega – PWA frontend + Node.js backend",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check main.js agent.js quiz.js service-worker.js"
+  },
+  "keywords": ["ai", "chat", "pwa", "openai"],
+  "license": "MPL-2.0"
+}
