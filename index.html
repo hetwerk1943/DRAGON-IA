@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DRAGON-IA</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="ad-banner">Advertisement</div>
+
+  <h1>DRAGON-IA Chat</h1>
+
+  <div id="chat-container">
+    <div class="user-msg">You: Hello!</div>
+    <div class="ai-msg">Dragon: Hi! How can I help you today?</div>
+  </div>
+
+  <form id="chat-form">
+    <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" />
+    <button type="submit">Send</button>
+  </form>
+
+  <div class="ad-banner">Advertisement</div>
+
+  <script>
+    const form = document.getElementById('chat-form');
+    const input = document.getElementById('user-input');
+    const container = document.getElementById('chat-container');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+
+      const userDiv = document.createElement('div');
+      userDiv.className = 'user-msg';
+      userDiv.textContent = 'You: ' + text;
+      container.appendChild(userDiv);
+      input.value = '';
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({message: text})
+        });
+        const data = await res.json();
+        const aiDiv = document.createElement('div');
+        aiDiv.className = 'ai-msg';
+        aiDiv.textContent = 'Dragon: ' + (data.reply || data.message || 'No response.');
+        container.appendChild(aiDiv);
+        container.scrollTop = container.scrollHeight;
+      } catch (error) {
+        const errDiv = document.createElement('div');
+        errDiv.className = 'ai-msg';
+        errDiv.textContent = 'Dragon: Error connecting to server.';
+        container.appendChild(errDiv);
+        container.scrollTop = container.scrollHeight;
+      }
+    });
+  </script>
+</body>
+</html>
