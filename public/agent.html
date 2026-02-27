@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DRAGON-IA – Agent Dashboard</title>
+  <meta name="description" content="DRAGON-IA Global Multi-Agent AI Orchestration Dashboard" />
+  <meta name="theme-color" content="#238636" />
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <!-- Social / SEO -->
+  <meta property="og:title" content="DRAGON-IA Dashboard" />
+  <meta property="og:description" content="Real-time multi-agent AI orchestration and security dashboard." />
+  <meta property="og:type" content="website" />
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/dashboard.css" />
+</head>
+<body>
+  <header>
+    <div>
+      <h1>🐉 DRAGON-IA</h1>
+      <span class="subtitle">Global Multi-Agent AI Orchestration</span>
+    </div>
+    <div class="ws-indicator">
+      <div id="ws-dot" class="ws-dot"></div>
+      <span id="ws-label">Connecting…</span>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ── Agent Cards ────────────────────────────────────────── -->
+    <section class="section">
+      <h2>🤖 Agents</h2>
+      <div class="agents-grid">
+
+        <!-- RepoAgent -->
+        <div class="agent-card" id="agent-RepoAgent">
+          <h3>Repo-Agent</h3>
+          <span class="status idle">idle</span>
+          <p class="last-run">Never run</p>
+          <input id="repo-url" type="text" placeholder="GitHub repo URL (optional)"
+            style="width:100%;background:#0d1117;border:1px solid #30363d;border-radius:4px;color:#c9d1d9;padding:4px 6px;font-size:0.75rem;margin-top:0.5rem" />
+          <button data-agent-run="repo">▶ Run</button>
+        </div>
+
+        <!-- TestAgent -->
+        <div class="agent-card" id="agent-TestAgent">
+          <h3>Test-Agent</h3>
+          <span class="status idle">idle</span>
+          <p class="last-run">Never run</p>
+          <button data-agent-run="test">▶ Run</button>
+        </div>
+
+        <!-- SecAgent -->
+        <div class="agent-card" id="agent-SecAgent">
+          <h3>Sec-Agent</h3>
+          <span class="status idle">idle</span>
+          <p class="last-run">Never run</p>
+          <button data-agent-run="sec">▶ Run</button>
+        </div>
+
+        <!-- AnalyticsAgent -->
+        <div class="agent-card" id="agent-AnalyticsAgent">
+          <h3>Analytics-Agent</h3>
+          <span class="status idle">idle</span>
+          <p class="last-run">Never run</p>
+          <button data-agent-run="analytics">▶ Refresh</button>
+        </div>
+
+        <!-- ChatAgent -->
+        <div class="agent-card" id="agent-ChatAgent">
+          <h3>Chat-Agent</h3>
+          <span class="status idle">idle</span>
+          <p class="last-run">Never run</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Analytics Metrics ──────────────────────────────────── -->
+    <section class="section">
+      <h2>📊 Analytics</h2>
+      <div class="metrics-grid">
+        <div class="metric-card"><div id="metric-requests" class="value">–</div><div class="label">Requests</div></div>
+        <div class="metric-card"><div id="metric-errors" class="value">–</div><div class="label">Errors</div></div>
+        <div class="metric-card"><div id="metric-avg-ms" class="value">–</div><div class="label">Avg Response</div></div>
+        <div class="metric-card"><div id="metric-uptime" class="value">–</div><div class="label">Uptime</div></div>
+      </div>
+    </section>
+
+    <!-- ── Security Score ─────────────────────────────────────── -->
+    <section class="section">
+      <h2>🔒 Security</h2>
+      <div class="score-ring">
+        <div id="sec-score" class="score-circle">–</div>
+        <ul id="findings-list" class="findings-list">
+          <li><span class="finding-badge badge-info">info</span>Run Sec-Agent to see findings.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ── Repo Report ────────────────────────────────────────── -->
+    <section class="section">
+      <h2>📁 Repo Report</h2>
+      <div id="repo-result" style="font-size:0.85rem;color:var(--text-dim)">Run Repo-Agent to see analysis.</div>
+    </section>
+
+    <!-- ── Test Results ───────────────────────────────────────── -->
+    <section class="section">
+      <h2>🧪 Test Results</h2>
+      <div id="test-result" style="font-size:0.85rem;color:var(--text-dim)">Run Test-Agent to see results.</div>
+    </section>
+
+    <!-- ── Chat ──────────────────────────────────────────────── -->
+    <section class="section">
+      <h2>💬 Chat (DRAGON-IA)</h2>
+      <div class="chat-container">
+        <div id="chat-messages" class="chat-messages">
+          <div class="chat-msg assistant"><span class="role">DRAGON-IA:</span>Cześć! Jestem DRAGON-IA. Jak mogę pomóc?</div>
+        </div>
+        <div class="chat-input-row">
+          <input id="chat-input" type="text" placeholder="Wpisz wiadomość…" autocomplete="off" />
+          <button id="chat-send">Wyślij</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Event Log ──────────────────────────────────────────── -->
+    <section class="section">
+      <h2>📋 Event Log</h2>
+      <div id="event-log" class="event-log"></div>
+    </section>
+
+  </main>
+
+  <!-- Socket.io client -->
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- Dashboard logic -->
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
