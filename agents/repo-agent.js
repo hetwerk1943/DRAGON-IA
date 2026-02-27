@@ -38,7 +38,8 @@ function analyseFile(filePath) {
 
   if (rel.endsWith('.js') || rel.endsWith('.mjs')) {
     if (content.includes('eval('))       recommendations.push({ file: rel, level: 'warning', msg: 'Use of eval() detected – potential security risk' });
-    if (!content.startsWith("'use strict'") && !content.includes('"use strict"') && !content.includes('import '))
+    const trimmed = content.replace(/^\s*(\/\/[^\n]*\n\s*)*/,'');
+    if (!trimmed.startsWith("'use strict'") && !trimmed.startsWith('"use strict"') && !content.includes('import '))
       recommendations.push({ file: rel, level: 'info', msg: 'Consider adding "use strict" directive' });
     if (content.includes('console.log') && !rel.includes('test'))
       recommendations.push({ file: rel, level: 'info', msg: 'console.log found – consider removing debug logs in production' });

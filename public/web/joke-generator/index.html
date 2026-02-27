@@ -162,10 +162,6 @@
     document.getElementById('joke-count').textContent = jokeCount;
   }
 
-  function escHtml(str) {
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
   // ── Fetch joke from JokeAPI ────────────────────────────────────────────────
   async function fetchJoke() {
     const category  = document.getElementById('category-select').value || 'Any';

@@ -74,7 +74,7 @@ function auditHtml(filePath) {
     issues.push({ severity: 'warning', msg: 'document.write() found – XSS risk' });
   }
 
-  // innerHTML without obvious sanitisation
+  // innerHTML without obvious sanitisation (basic pattern check – manual review needed for complex cases)
   const innerHtmlCount = (content.match(/\.innerHTML\s*=/g) || []).length;
   if (innerHtmlCount > 0) {
     issues.push({ severity: 'info', msg: `innerHTML assignments found (${innerHtmlCount}) – ensure inputs are sanitised` });

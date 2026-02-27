@@ -15,7 +15,7 @@ const wss = new WebSocket.Server({ server });
 
 // ── OpenAI (optional) ────────────────────────────────────────────────────────
 let openai = null;
-if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'sk-your-openai-api-key-here') {
+if (process.env.OPENAI_API_KEY?.trim()) {
   const OpenAI = require('openai');
   openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 }
