@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-abstraction
+  namespace: dragon-ia
+  labels:
+    app: model-abstraction
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: model-abstraction
+  template:
+    metadata:
+      labels:
+        app: model-abstraction
+    spec:
+      containers:
+        - name: model-abstraction
+          image: dragon-ia/model-abstraction:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MODEL_OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: dragon-secrets
+                  key: openai-api-key
+            - name: MODEL_ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: dragon-secrets
+                  key: anthropic-api-key
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: model-abstraction
+  namespace: dragon-ia
+spec:
+  selector:
+    app: model-abstraction
+  ports:
+    - port: 8000
+      targetPort: 8000
