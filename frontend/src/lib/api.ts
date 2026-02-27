@@ -6,6 +6,7 @@ interface ApiResponse<T> {
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  // NOTE: For production, consider httpOnly cookies to mitigate XSS risks.
   const token = typeof window !== 'undefined' ? localStorage.getItem('dragon_token') : null;
 
   const headers: Record<string, string> = {
