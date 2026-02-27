@@ -53,7 +53,8 @@
           body: JSON.stringify({ message: text }),
         });
         const data = await res.json();
-        addMessage(data.reply || data.error, "assistant");
+        const text = data.reply || (typeof data.error === "string" ? data.error : JSON.stringify(data.error));
+        addMessage(text, "assistant");
       } catch {
         addMessage("Błąd połączenia z serwerem", "assistant");
       }

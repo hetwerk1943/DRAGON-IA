@@ -22,6 +22,10 @@ function request(server, method, path, body) {
 describe("DRAGON-IA server", () => {
   let server;
 
+  function closeServer(srv) {
+    return new Promise((resolve) => srv.close(resolve));
+  }
+
   it("serves the frontend on GET /", async () => {
     server = app.listen(0);
     try {
@@ -29,7 +33,7 @@ describe("DRAGON-IA server", () => {
       assert.strictEqual(res.status, 200);
       assert.ok(res.body.includes("DRAGON-IA"));
     } finally {
-      server.close();
+      await closeServer(server);
     }
   });
 
@@ -39,7 +43,7 @@ describe("DRAGON-IA server", () => {
       const res = await request(server, "POST", "/api/chat", {});
       assert.strictEqual(res.status, 400);
     } finally {
-      server.close();
+      await closeServer(server);
     }
   });
 
@@ -54,7 +58,7 @@ describe("DRAGON-IA server", () => {
       assert.ok(data.error.includes("OPENAI_API_KEY"));
     } finally {
       if (original) process.env.OPENAI_API_KEY = original;
-      server.close();
+      await closeServer(server);
     }
   });
 });
