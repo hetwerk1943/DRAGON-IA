@@ -6,7 +6,9 @@ import { apiLimiter } from '../middleware/rateLimiter';
 const router = Router();
 const adminService = new AdminService();
 
-router.get('/stats', authenticate, authorize('admin'), apiLimiter, async (_req: AuthRequest, res: Response) => {
+router.use(apiLimiter);
+
+router.get('/stats', authenticate, authorize('admin'), async (_req: AuthRequest, res: Response) => {
   try {
     const stats = await adminService.getSystemStats();
     res.json(stats);
@@ -15,7 +17,7 @@ router.get('/stats', authenticate, authorize('admin'), apiLimiter, async (_req: 
   }
 });
 
-router.get('/audit-log', authenticate, authorize('admin'), apiLimiter, async (req: AuthRequest, res: Response) => {
+router.get('/audit-log', authenticate, authorize('admin'), async (req: AuthRequest, res: Response) => {
   try {
     const limit = parseInt(req.query.limit as string) || 100;
     const offset = parseInt(req.query.offset as string) || 0;

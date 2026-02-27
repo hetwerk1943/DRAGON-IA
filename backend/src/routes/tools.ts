@@ -6,11 +6,13 @@ import { apiLimiter } from '../middleware/rateLimiter';
 const router = Router();
 const toolService = new ToolService();
 
-router.get('/', authenticate, apiLimiter, (_req: AuthRequest, res: Response) => {
+router.use(apiLimiter);
+
+router.get('/', authenticate, (_req: AuthRequest, res: Response) => {
   res.json(toolService.getAvailableTools());
 });
 
-router.post('/execute', authenticate, apiLimiter, async (req: AuthRequest, res: Response) => {
+router.post('/execute', authenticate, async (req: AuthRequest, res: Response) => {
   try {
     const { name, params } = req.body;
     if (!name) {
