@@ -26,7 +26,7 @@ class TestAgent {
 
     try {
       if (payload.runLint !== false) {
-        const lintResult = await this._runLint(payload.cwd);
+        const lintResult = await this._runLint(payload.cwd, payload.entryFile);
         report.results.push(lintResult);
       }
 
@@ -49,10 +49,11 @@ class TestAgent {
     }
   }
 
-  async _runLint(cwd) {
+  async _runLint(cwd, entryFile) {
     try {
       const dir = cwd || process.cwd();
-      await execFileAsync('node', ['--check', 'server/index.js'], { cwd: dir });
+      const file = entryFile || 'server/index.js';
+      await execFileAsync('node', ['--check', file], { cwd: dir });
       return { task: 'node-check', passed: true, output: 'Node syntax OK' };
     } catch (err) {
       return { task: 'node-check', passed: false, output: err.stderr || err.message };

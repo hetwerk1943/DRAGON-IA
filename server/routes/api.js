@@ -89,7 +89,7 @@ module.exports = function createApiRouter(orchestrator) {
   router.get('/analytics/report', async (req, res) => {
     try {
       const report = await orchestrator.agents.analytics.report({
-        adSafeMode: req.query.adSafeMode !== 'false',
+        adSafeMode: !['false', '0', 'no', 'off'].includes(String(req.query.adSafeMode).toLowerCase()),
       });
       res.json({ ok: true, report });
     } catch (err) {

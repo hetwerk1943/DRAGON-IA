@@ -12,7 +12,10 @@ class ChatAgent {
     this.orchestrator = orchestrator;
     this.status = 'idle';
     this._sessions = new Map();
-    this._encKey = process.env.CHAT_ENCRYPT_KEY || 'default-key-32byteslong!!!!!!!';
+    if (!process.env.CHAT_ENCRYPT_KEY) {
+      console.warn('[ChatAgent] WARNING: CHAT_ENCRYPT_KEY env var not set. Using a random per-instance key.');
+    }
+    this._encKey = process.env.CHAT_ENCRYPT_KEY || crypto.randomBytes(32).toString('hex');
   }
 
   /**

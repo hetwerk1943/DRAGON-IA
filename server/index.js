@@ -6,6 +6,7 @@ const path = require('path');
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 const { WebSocketServer } = require('ws');
 const { v4: uuidv4 } = require('uuid');
 
@@ -31,15 +32,35 @@ app.use(helmet({
 app.use(cors({ origin: process.env.ALLOWED_ORIGIN || '*' }));
 app.use(express.json({ limit: '1mb' }));
 
+// ── Rate limiting ──────────────────────────────────────────────────────────
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+const chatLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+const staticLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // ── Static files (PWA) ─────────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // ── API routes ─────────────────────────────────────────────────────────────
-app.use('/api', createApiRouter(orchestrator));
-app.use('/chat', createChatRouter(orchestrator));
+app.use('/api', apiLimiter, createApiRouter(orchestrator));
+app.use('/chat', chatLimiter, createChatRouter(orchestrator));
 
 // ── Catch-all: serve index.html for SPA ───────────────────────────────────
-app.get('*', (_req, res) => {
+app.get('*', staticLimiter, (_req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
