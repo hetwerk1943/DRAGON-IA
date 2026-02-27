@@ -1,0 +1,132 @@
+/* UltraChat AI Omega - Main Styles */
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 1rem;
+  background: #f5f5f5;
+}
+
+header {
+  text-align: center;
+  padding: 1rem 0 0.5rem;
+}
+
+header h1 {
+  font-size: 1.6rem;
+  color: #333;
+  margin: 0;
+}
+
+.ad-banner {
+  background: #ddd;
+  text-align: center;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  max-width: 728px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 480px) {
+  .ad-banner {
+    max-width: 100%;
+  }
+}
+
+#chat-container {
+  margin: 1rem 0;
+  max-width: 728px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#messages {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 1rem;
+  min-height: 300px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.user-msg {
+  color: #2a9d8f;
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.ai-msg {
+  color: #e76f51;
+  margin: 0.5rem 0;
+}
+
+.msg-label {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  margin-bottom: 0.2rem;
+}
+
+.msg-bubble {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 12px;
+  max-width: 90%;
+  word-break: break-word;
+}
+
+.user-msg .msg-bubble {
+  background: #e0f5f3;
+}
+
+.ai-msg .msg-bubble {
+  background: #fde8e1;
+}
+
+#input-area {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+#user-input {
+  flex: 1;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  resize: none;
+}
+
+#send-btn {
+  padding: 0.6rem 1.2rem;
+  background: #2a9d8f;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+#send-btn:hover:not(:disabled) {
+  background: #21867a;
+}
+
+.typing-indicator {
+  color: #999;
+  font-style: italic;
+  font-size: 0.9rem;
+  padding: 0.4rem 0;
+}
+
+footer {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 1rem;
+}
