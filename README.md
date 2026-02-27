@@ -41,6 +41,6 @@ uvicorn dragon_ia.main:app --reload
 ## Tests
 
 ```bash
-pip install pytest httpx
+pip install -r requirements-dev.txt
 python -m pytest tests/ -v
 ```
