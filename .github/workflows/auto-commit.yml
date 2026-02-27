@@ -1,0 +1,21 @@
+name: Automatyczne dodawanie plików
+on:
+  push:
+    paths:
+      - 'folder_do_monitorowania/**'
+
+permissions:
+  contents: write
+
+jobs:
+  update-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add .
+          git commit -m "Automatyczne dodanie plików" || echo "No changes to commit"
+          git push
