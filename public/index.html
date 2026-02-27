@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UltraChat AI Omega</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>UltraChat AI Omega</h1>
+  </header>
+
+  <main>
+    <div class="ad-banner" aria-label="Advertisement">Advertisement</div>
+
+    <div id="chat-container" aria-live="polite" aria-label="Chat messages"></div>
+
+    <div class="ad-banner" aria-label="Advertisement">Advertisement</div>
+
+    <form id="chat-form" autocomplete="off">
+      <input
+        type="text"
+        id="user-input"
+        placeholder="Type your message…"
+        required
+        maxlength="2000"
+        aria-label="Message input"
+      />
+      <button type="submit" id="send-btn">Send</button>
+    </form>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
