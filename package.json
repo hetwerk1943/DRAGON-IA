@@ -1,0 +1,19 @@
+{
+  "name": "dragon-ia",
+  "version": "1.0.0",
+  "description": "DRAGON-IA: Backend + Frontend AI Chat Application with PWA support",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "validate:js": "node --check main.js && node --check agent.js && node --check quiz.js && node --check service-worker.js",
+    "lint": "npm run validate:js"
+  },
+  "keywords": [
+    "ai",
+    "chat",
+    "pwa",
+    "dragon-ia"
+  ],
+  "author": "hetwerk1943",
+  "license": "MPL-2.0"
+}

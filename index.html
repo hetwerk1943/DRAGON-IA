@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="DRAGON-IA: Inteligentny asystent AI z czatem, quizem i trybem agenta. Aplikacja PWA.">
+  <meta name="keywords" content="AI, chat, dragon, asystent, quiz, PWA">
+  <meta name="author" content="hetwerk1943">
+  <meta name="theme-color" content="#0f3460">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="DRAGON-IA &mdash; AI Chat">
+  <meta property="og:description" content="Inteligentny asystent AI z czatem, quizem i trybem agenta.">
+  <meta property="og:type" content="website">
+  <title>DRAGON-IA &mdash; AI Chat</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>DRAGON-IA</h1>
+    <nav class="main-nav">
+      <button class="nav-btn active" data-section="chat">Chat</button>
+      <button class="nav-btn" data-section="agent">Agent</button>
+      <button class="nav-btn" data-section="quiz">Quiz</button>
+    </nav>
+    <label class="ads-toggle" title="Włącz/Wyłącz reklamy">
+      <input type="checkbox" id="ads-toggle-checkbox" checked>
+      <span>Reklamy</span>
+    </label>
+  </header>
+
+  <main class="app-main">
+    <!-- Ad Banner (Top) -->
+    <div class="ad-banner ad-banner--top" data-ad-slot="top">
+      <div class="ad-placeholder">Reklama &mdash; miejsce na baner</div>
+    </div>
+
+    <!-- Chat Section -->
+    <section id="section-chat" class="section active">
+      <div class="chat-container">
+        <div id="chat-messages" class="chat-messages"></div>
+        <form id="chat-form" class="chat-form">
+          <input type="text" id="chat-input" class="chat-input" placeholder="Napisz wiadomość..." autocomplete="off" required>
+          <button type="submit" class="chat-send-btn">Wyślij</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Agent Section -->
+    <section id="section-agent" class="section">
+      <div class="agent-container">
+        <h2>Tryb Agenta AI</h2>
+        <p>Agent automatycznie analizuje i wykonuje zadania.</p>
+        <textarea id="agent-task-input" class="agent-input" placeholder="Opisz zadanie dla agenta..." rows="4"></textarea>
+        <button id="agent-run-btn" class="btn-primary">Uruchom agenta</button>
+        <div id="agent-output" class="agent-output"></div>
+      </div>
+    </section>
+
+    <!-- Quiz Section -->
+    <section id="section-quiz" class="section">
+      <div class="quiz-container">
+        <h2>Quiz AI</h2>
+        <div id="quiz-area" class="quiz-area">
+          <p>Kliknij przycisk, aby rozpocząć quiz.</p>
+        </div>
+        <button id="quiz-start-btn" class="btn-primary">Rozpocznij quiz</button>
+      </div>
+    </section>
+
+    <!-- Ad Banner (Bottom) -->
+    <div class="ad-banner ad-banner--bottom" data-ad-slot="bottom">
+      <div class="ad-placeholder">Reklama &mdash; miejsce na baner</div>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <p>&copy; 2026 DRAGON-IA. Wszelkie prawa zastrzeżone.</p>
+  </footer>
+
+  <script src="main.js"></script>
+  <script src="agent.js"></script>
+  <script src="quiz.js"></script>
+</body>
+</html>
