@@ -7,7 +7,10 @@
 const BaseAgent = require('./BaseAgent');
 const CryptoJS = require('crypto-js');
 
-const ENCRYPTION_KEY = process.env.CHAT_ENCRYPTION_KEY || 'DRAGON-IA-default-key-change-me!';
+const ENCRYPTION_KEY = process.env.CHAT_ENCRYPTION_KEY || (() => {
+  console.warn('[ChatAgent] CHAT_ENCRYPTION_KEY not set – using insecure default key. Set it in .env for production.');
+  return 'DRAGON-IA-default-key-change-me!';
+})();
 
 class ChatAgent extends BaseAgent {
   constructor() {

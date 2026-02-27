@@ -160,7 +160,7 @@
   const chatMessages = document.getElementById('chat-messages');
   const chatInput = document.getElementById('chat-input');
   const chatSend = document.getElementById('chat-send');
-  const sessionId = 'session-' + Math.random().toString(36).slice(2);
+  const sessionId = crypto.randomUUID ? crypto.randomUUID() : 'session-' + Date.now().toString(36);
 
   socket.on('chat:reply', (data) => appendChatMsg('assistant', data.reply));
   socket.on('chat:error', (data) => appendChatMsg('error', data.message));
