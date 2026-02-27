@@ -1,49 +1,20 @@
-# 🤖 UltraChat AI
+# UltraChat AI
 
-UltraChat AI to prosta aplikacja webowa typu ChatGPT clone, wykorzystująca API OpenAI do generowania odpowiedzi AI w czasie rzeczywistym.
+## Opis
+UltraChat AI to własna implementacja ChatGPT z frontendem, backendem, historią czatu i SAFE AdSense.
 
-## 🚀 Funkcje
+## Uruchomienie
 
-- Wysyłanie wiadomości do modelu AI
-- Odbieranie odpowiedzi w czasie rzeczywistym
-- Prosty i lekki interfejs webowy
-- Możliwość dalszej rozbudowy
+1️⃣ Backend:
+```bash
+cd backend
+cp .env.example .env
+# Wstaw swój klucz OpenAI w .env
+npm install
+npm start
+```
 
-## 🧠 Technologia
-
-- HTML
-- JavaScript (Fetch API)
-- OpenAI API
-
-## 🔧 Jak uruchomić
-
-1. Pobierz plik `index.html`
-2. Wstaw swój klucz API OpenAI w miejsce `TWOJ_KLUCZ_API`
-3. Otwórz plik w przeglądarce
-
-## ⚠️ Uwaga bezpieczeństwa
-
-Ta wersja umieszcza klucz API bezpośrednio w kodzie frontendu.  
-Nie używaj jej w środowisku produkcyjnym.
-
-Do produkcji zalecane jest:
-- Node.js + Express
-lub
-- Python + FastAPI
-
-## 📦 Możliwa rozbudowa
-
-- Historia czatu
-- Logowanie użytkowników
-- System subskrypcji
-- Integracja z bazą danych
-- Aplikacja mobilna
-- Własny branding
-
-## 📜 Licencja
-
-MIT License
-
----
-
-Stworzone przez Dominik Opałka 🚀
+2️⃣ Frontend:
+```bash
+npx http-server frontend -p 8080
+```

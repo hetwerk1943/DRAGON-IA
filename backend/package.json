@@ -1,7 +1,7 @@
 {
-  "name": "ultrachat-ai",
+  "name": "ultrachat-ai-backend",
   "version": "1.0.0",
-  "description": "UltraChat AI - ChatGPT clone using OpenAI API",
+  "description": "UltraChat AI – Node.js/Express backend proxy for OpenAI API",
   "type": "module",
   "main": "server.js",
   "scripts": {

@@ -1,4 +1,3 @@
-// server.js
 import express from 'express';
 import fetch from 'node-fetch';
 import cors from 'cors';
@@ -6,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 if (!process.env.OPENAI_API_KEY) {
-  console.error("Error: OPENAI_API_KEY is not set. Please configure it in .env");
+  console.error("Błąd: OPENAI_API_KEY nie jest ustawiony. Skonfiguruj go w pliku .env");
   process.exit(1);
 }
 
@@ -16,9 +15,7 @@ app.use(express.json());
 
 app.post('/chat', async (req, res) => {
   const { message } = req.body;
-  if (!message || typeof message !== 'string' || message.trim() === '') {
-    return res.status(400).json({ error: "Field 'message' is required and must be a non-empty string." });
-  }
+  if (!message) return res.status(400).json({ error: "Brak wiadomości" });
 
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -34,15 +31,15 @@ app.post('/chat', async (req, res) => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      return res.status(response.status).json({ error: errorData.error?.message || "OpenAI API request failed." });
+      return res.status(response.status).json({ error: "Błąd API OpenAI" });
     }
 
     const data = await response.json();
     res.json(data);
   } catch (err) {
-    res.status(500).json({ error: "Failed to reach OpenAI API." });
+    console.error(err);
+    res.status(500).json({ error: "Błąd serwera" });
   }
 });
 
-app.listen(3000, () => console.log("Server running on http://localhost:3000"));
+app.listen(3000, () => console.log("Backend uruchomiony: http://localhost:3000"));
