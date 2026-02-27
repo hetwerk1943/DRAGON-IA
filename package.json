@@ -2,9 +2,7 @@
   "name": "dragon-ia",
   "version": "1.0.0",
   "description": "DRAGON-IA UltraChat AI Omega — Backend + Frontend, PWA, SAFE AdSense",
-  "main": "main.js",
   "scripts": {
-    "start": "node main.js",
     "validate:js": "node --check main.js && node --check agent.js && node --check quiz.js && node --check service-worker.js",
     "lint": "echo 'Lint complete'"
   },
