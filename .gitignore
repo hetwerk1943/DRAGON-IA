@@ -1,3 +1,5 @@
 backend/.env
 backend/node_modules/
+backend/logs/
+backend/backups/
 node_modules/

@@ -8,38 +8,51 @@
   <title>UltraChat AI</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css">
-  <!-- Google AdSense (załaduj tylko gdy włączone) -->
 </head>
 <body class="theme-dark">
   <header>
     <h1>🤖 UltraChat AI</h1>
     <div class="header-controls">
       <span id="offline-badge" class="badge badge-offline" hidden>📴 Offline</span>
-      <button id="theme-toggle" title="Przełącz motyw">🌙</button>
-      <button id="clear-btn" title="Wyczyść historię">🗑️</button>
+      <span id="xp-display" class="badge badge-xp">✨ 0 XP</span>
+      <select id="persona-select" title="Wybierz osobowość AI">
+        <option value="default">🤖 Domyślny</option>
+      </select>
+      <button class="icon-btn" id="theme-toggle" title="Przełącz motyw">🌙</button>
+      <button class="icon-btn" id="clear-btn" title="Wyczyść historię">🗑️</button>
+      <a href="admin.html" id="admin-link" title="Panel administratora">⚙️ Admin</a>
     </div>
   </header>
 
-  <!-- AdSense TOP -->
-  <div class="ad-banner" id="ad-top" aria-hidden="true"></div>
+  <div class="ad-banner" id="ad-top" aria-hidden="true">Reklama</div>
 
   <main id="chat-messages" role="log" aria-live="polite" aria-label="Historia czatu"></main>
 
-  <!-- AdSense MIDDLE -->
-  <div class="ad-banner" id="ad-middle" aria-hidden="true"></div>
+  <div class="ad-banner" id="ad-middle" aria-hidden="true">Reklama</div>
 
-  <form id="chat-form" autocomplete="off">
-    <textarea
-      id="userInput"
-      placeholder="Napisz wiadomość… (Enter = wyślij, Shift+Enter = nowa linia)"
-      rows="3"
-      aria-label="Wpisz wiadomość"
-    ></textarea>
-    <button type="submit" id="send-btn">Wyślij ➤</button>
-  </form>
+  <div class="chat-form-wrap">
+    <form id="chat-form" autocomplete="off">
+      <div class="form-row">
+        <textarea
+          id="userInput"
+          placeholder="Napisz wiadomość… (Enter = wyślij, Shift+Enter = nowa linia) | Komendy: /help"
+          rows="2"
+          aria-label="Wpisz wiadomość"
+        ></textarea>
+        <button type="submit" id="send-btn">Wyślij ➤</button>
+      </div>
+      <div class="form-extras">
+        <button type="button" class="icon-btn" id="mic-btn" title="Wejście głosowe (STT)">🎙️</button>
+        <button type="button" class="icon-btn" id="tts-btn" title="Odczyt głosowy (TTS)">🔊</button>
+        <button type="button" class="icon-btn" id="upload-btn" title="Prześlij obraz do analizy">📎</button>
+        <button type="button" class="icon-btn" id="rollback-btn" title="Cofnij ostatnią wymianę">↩️</button>
+        <input type="file" id="file-input" accept="image/jpeg,image/png,image/gif,image/webp" hidden>
+        <span class="hint">💡 Wpisz <code>/help</code> aby zobaczyć wszystkie komendy</span>
+      </div>
+    </form>
+  </div>
 
-  <!-- AdSense BOTTOM -->
-  <div class="ad-banner" id="ad-bottom" aria-hidden="true"></div>
+  <div class="ad-banner" id="ad-bottom" aria-hidden="true">Reklama</div>
 
   <script src="chat.js"></script>
 </body>

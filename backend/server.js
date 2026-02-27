@@ -57,7 +57,7 @@ const PERSONAS = {
 // ── Express app ────────────────────────────────────────────────────────────
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '10mb' }));
 
 const limiter = rateLimit({
   windowMs: 60 * 1000,
@@ -68,6 +68,7 @@ const limiter = rateLimit({
 });
 app.use('/chat', limiter);
 app.use('/image', limiter);
+app.use('/admin', limiter);
 
 // ── /config ────────────────────────────────────────────────────────────────
 app.get('/config', (_req, res) => {
@@ -79,7 +80,7 @@ app.get('/config', (_req, res) => {
 });
 
 // ── /admin/stats ───────────────────────────────────────────────────────────
-app.get('/admin/stats', (_req, res) => {
+app.get('/admin/stats', limiter, (_req, res) => {
   // Count log lines from today's file for accurate totals
   const date = new Date().toISOString().slice(0, 10);
   const logFile = path.join(LOGS_DIR, `chat-${date}.log`);
@@ -204,6 +205,143 @@ app.post('/image', async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Błąd serwera przy generowaniu obrazu" });
   }
+});
+
+// ── /upload (GPT-4 Vision) ─────────────────────────────────────────────────
+app.post('/upload', async (req, res) => {
+  const { imageBase64, mimeType, prompt = 'Opisz szczegółowo co widzisz na tym obrazie.' } = req.body;
+  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  if (!imageBase64 || !ALLOWED_TYPES.includes(mimeType)) {
+    return res.status(400).json({ error: 'Wymagany obraz (JPEG/PNG/GIF/WebP) w formacie base64.' });
+  }
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: [
+          { type: 'image_url', image_url: { url: `data:${mimeType};base64,${imageBase64}` } },
+          { type: 'text', text: prompt }
+        ]}]
+      })
+    });
+    if (!response.ok) return res.status(response.status).json({ error: 'Błąd API OpenAI Vision' });
+    const data = await response.json();
+    const description = data.choices?.[0]?.message?.content || '';
+    writeLog({ type: 'upload', mimeType });
+    res.json({ description });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Błąd serwera' });
+  }
+});
+
+// ── /lint ──────────────────────────────────────────────────────────────────
+app.post('/lint', async (req, res) => {
+  const { code, language = 'javascript' } = req.body;
+  if (!code || typeof code !== 'string') return res.status(400).json({ error: 'Brak kodu' });
+  if (language === 'json') {
+    try { JSON.parse(code); return res.json({ result: '✅ JSON jest poprawny.' }); }
+    catch (e) { return res.json({ result: `❌ Błąd JSON: nieprawidłowa składnia` }); }
+  }
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
+      body: JSON.stringify({ model: process.env.OPENAI_MODEL || 'gpt-4o-mini', messages: [
+        { role: 'system', content: 'Jesteś ekspertem w lintowaniu kodu. Analizuj kod i zwróć listę błędów, ostrzeżeń i sugestii w języku polskim. Bądź konkretny i zwięzły.' },
+        { role: 'user', content: `Język: ${language}\n\nKod:\n\`\`\`${language}\n${code}\n\`\`\`` }
+      ]})
+    });
+    if (!response.ok) return res.status(response.status).json({ error: 'Błąd API OpenAI' });
+    const data = await response.json();
+    res.json({ result: data.choices?.[0]?.message?.content || '' });
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Błąd serwera' }); }
+});
+
+// ── /translate ─────────────────────────────────────────────────────────────
+app.post('/translate', async (req, res) => {
+  const { text, targetLang = 'en' } = req.body;
+  if (!text || typeof text !== 'string') return res.status(400).json({ error: 'Brak tekstu' });
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
+      body: JSON.stringify({ model: process.env.OPENAI_MODEL || 'gpt-4o-mini', messages: [
+        { role: 'system', content: `Jesteś tłumaczem. Przetłumacz podany tekst na język: ${targetLang}. Zwróć tylko tłumaczenie, bez komentarzy.` },
+        { role: 'user', content: text }
+      ]})
+    });
+    if (!response.ok) return res.status(response.status).json({ error: 'Błąd API OpenAI' });
+    const data = await response.json();
+    res.json({ translation: data.choices?.[0]?.message?.content || '' });
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Błąd serwera' }); }
+});
+
+// ── /fix-code ──────────────────────────────────────────────────────────────
+app.post('/fix-code', async (req, res) => {
+  const { code, language = 'javascript', issue = '' } = req.body;
+  if (!code || typeof code !== 'string') return res.status(400).json({ error: 'Brak kodu' });
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
+      body: JSON.stringify({ model: process.env.OPENAI_MODEL || 'gpt-4o-mini', messages: [
+        { role: 'system', content: 'Jesteś ekspertem w naprawie kodu. Popraw podany kod, usuń błędy i zoptymalizuj. Odpowiedz w formacie JSON: {"fixed": "<naprawiony kod>", "explanation": "<wyjaśnienie zmian>"}. Nie dodawaj nic poza tym JSON.' },
+        { role: 'user', content: `Język: ${language}${issue ? `\nProblem: ${issue}` : ''}\n\nKod:\n\`\`\`${language}\n${code}\n\`\`\`` }
+      ]})
+    });
+    if (!response.ok) return res.status(response.status).json({ error: 'Błąd API OpenAI' });
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content || '{}';
+    try { res.json(JSON.parse(content)); }
+    catch { res.json({ fixed: content, explanation: '' }); }
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Błąd serwera' }); }
+});
+
+// ── /generate-docs ─────────────────────────────────────────────────────────
+app.post('/generate-docs', async (req, res) => {
+  const { description, type = 'readme' } = req.body;
+  if (!description || typeof description !== 'string') return res.status(400).json({ error: 'Brak opisu' });
+  const typePrompts = {
+    readme: 'Wygeneruj pełny plik README.md w Markdown dla projektu.',
+    changelog: 'Wygeneruj CHANGELOG.md w formacie Keep a Changelog.',
+    api: 'Wygeneruj dokumentację API w formacie Markdown z przykładami endpointów.',
+  };
+  const sysPrompt = typePrompts[type] || typePrompts.readme;
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
+      body: JSON.stringify({ model: process.env.OPENAI_MODEL || 'gpt-4o-mini', messages: [
+        { role: 'system', content: sysPrompt },
+        { role: 'user', content: description }
+      ]})
+    });
+    if (!response.ok) return res.status(response.status).json({ error: 'Błąd API OpenAI' });
+    const data = await response.json();
+    res.json({ docs: data.choices?.[0]?.message?.content || '' });
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Błąd serwera' }); }
+});
+
+// ── /analyze ───────────────────────────────────────────────────────────────
+app.post('/analyze', async (req, res) => {
+  const { context } = req.body;
+  if (!context || typeof context !== 'string') return res.status(400).json({ error: 'Brak kontekstu' });
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
+      body: JSON.stringify({ model: process.env.OPENAI_MODEL || 'gpt-4o-mini', messages: [
+        { role: 'system', content: 'Jesteś proaktywnym asystentem AI. Analizuj podany kontekst (kod, projekt, problem) i dostarcz: 1) Wykryte problemy lub ryzyka, 2) Konkretne sugestie napraw, 3) Prognozę trendów lub zagrożeń. Odpowiedź w języku polskim, w czytelnym formacie Markdown.' },
+        { role: 'user', content: context }
+      ]})
+    });
+    if (!response.ok) return res.status(response.status).json({ error: 'Błąd API OpenAI' });
+    const data = await response.json();
+    res.json({ suggestions: data.choices?.[0]?.message?.content || '' });
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Błąd serwera' }); }
 });
 
 const PORT = process.env.PORT || 3000;
