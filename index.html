@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="DRAGON-IA - Inteligentny asystent AI" />
+    <meta name="theme-color" content="#1a1a2e" />
+    <title>DRAGON-IA</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="manifest" href="manifest.json" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>🐉 DRAGON-IA</h1>
+      <p>Inteligentny asystent AI</p>
+    </header>
+    <main id="app">
+      <section id="chat-container">
+        <div id="messages"></div>
+        <form id="chat-form">
+          <input
+            type="text"
+            id="user-input"
+            placeholder="Wpisz wiadomość..."
+            autocomplete="off"
+            required
+          />
+          <button type="submit">Wyślij</button>
+        </form>
+      </section>
+    </main>
+    <footer>
+      <p>&copy; 2024 DRAGON-IA. Wszelkie prawa zastrzeżone.</p>
+    </footer>
+    <script src="src/app.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
