@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     redis_url: str = "redis://redis:6379/0"
     allowed_origins: list[str] = ["http://localhost:3000"]
     rate_limit: str = "60/minute"
-    orchestrator_url: str = "http://ai-orchestrator:8001"
+    orchestrator_url: str = "http://ai-orchestrator:8000"
 
     model_config = {"env_prefix": "GATEWAY_"}
 

@@ -1,15 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect, FormEvent } from "react";
+import { chatCompletion } from "@/lib/api";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
 }
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-
-export { API_URL };
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -31,14 +28,7 @@ export default function Chat() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_URL}/v1/chat/completions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [...messages, userMessage],
-        }),
-      });
-      const data = await res.json();
+      const data = await chatCompletion([...messages, userMessage]);
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: data.content || "Empty response received from server" },

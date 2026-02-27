@@ -8,6 +8,11 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - api.dragon-ia.com
+        - dragon-ia.com
+      secretName: dragon-ia-tls
   rules:
     - host: api.dragon-ia.com
       http:
