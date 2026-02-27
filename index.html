@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="DRAGON-IA UltraChat AI Omega — inteligentny asystent czatu z obsługą PWA">
+  <meta name="keywords" content="AI, chat, dragon-ia, ultrachat, PWA, asystent">
+  <meta name="author" content="hetwerk1943">
+  <meta name="theme-color" content="#58a6ff">
+  <title>DRAGON-IA UltraChat AI Omega</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>🐉 DRAGON-IA UltraChat AI Omega</h1>
+    <nav>
+      <button id="btn-chat" class="nav-btn active">Chat</button>
+      <button id="btn-quiz" class="nav-btn">Quiz</button>
+      <button id="btn-ads-toggle" class="nav-btn" title="Toggle ads ON/OFF">Ads: ON</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- AdSense SAFE placeholder — top banner -->
+    <div class="ad-banner ad-banner--top" data-ad-slot="top" aria-label="Advertisement">
+      <p class="ad-placeholder">Ad placeholder — top banner</p>
+    </div>
+
+    <section id="section-chat" class="section active">
+      <div id="chat-log" class="chat-log" role="log" aria-live="polite"></div>
+      <form id="chat-form" class="chat-form" autocomplete="off">
+        <label for="chat-input" class="sr-only">Wiadomość</label>
+        <input id="chat-input" type="text" placeholder="Napisz wiadomość…" required>
+        <button type="submit">Wyślij</button>
+      </form>
+    </section>
+
+    <section id="section-quiz" class="section hidden">
+      <div id="quiz-container"></div>
+      <button id="quiz-start">Rozpocznij quiz</button>
+    </section>
+
+    <!-- AdSense SAFE placeholder — side banner -->
+    <aside class="ad-banner ad-banner--side" data-ad-slot="side" aria-label="Advertisement">
+      <p class="ad-placeholder">Ad placeholder — side banner</p>
+    </aside>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 DRAGON-IA &mdash; UltraChat AI Omega</p>
+  </footer>
+
+  <!-- AdSense SAFE placeholder — bottom banner -->
+  <div class="ad-banner ad-banner--bottom" data-ad-slot="bottom" aria-label="Advertisement">
+    <p class="ad-placeholder">Ad placeholder — bottom banner</p>
+  </div>
+
+  <script src="agent.js"></script>
+  <script src="quiz.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
