@@ -17,7 +17,7 @@
       output.textContent +=
         "Zadanie: " + task + "\n" +
         "Status: zakonczone (tryb demo)\n" +
-        "Wynik: Agent przetworzyml zapytanie pomyslnie.";
+        "Wynik: Agent przetworzył zapytanie pomyślnie.";
     }, 1200);
   }
 
@@ -25,7 +25,7 @@
     runBtn.addEventListener("click", function () {
       var task = taskInput.value.trim();
       if (!task) {
-        output.textContent = "Prosze wpisac opis zadania.";
+        output.textContent = "Proszę wpisać opis zadania.";
         return;
       }
       runAgent(task);

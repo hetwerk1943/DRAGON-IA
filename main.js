@@ -62,7 +62,7 @@
 
   function getBotReply(userText) {
     // Placeholder: echo response. Replace with real API call.
-    return "DRAGON-IA: Otrzymalem wiadomosc — \"" + userText + "\"";
+    return "DRAGON-IA: Otrzymałem wiadomość — \"" + userText + "\"";
   }
 
   if (chatForm) {

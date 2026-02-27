@@ -10,7 +10,7 @@
 
   var questions = [
     {
-      q: "Co oznacza skrot AI?",
+      q: "Co oznacza skrót AI?",
       options: [
         "Automatyczna Integracja",
         "Sztuczna Inteligencja",
@@ -20,7 +20,7 @@
       answer: 1
     },
     {
-      q: "Ktory jezyk jest najpopularniejszy w AI/ML?",
+      q: "Który język jest najpopularniejszy w AI/ML?",
       options: ["Java", "C++", "Python", "Ruby"],
       answer: 2
     },
