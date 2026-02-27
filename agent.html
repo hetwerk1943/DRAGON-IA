@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws: wss:;" />
+  <title>DRAGON-IA – Agent Dashboard</title>
+  <meta name="description" content="DRAGON-IA central orchestration dashboard – security scoring, agent status, logs and reports" />
+  <meta name="theme-color" content="#58a6ff" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="/public/css/style.css" />
+  <style>
+    .metrics-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .metric-box { flex: 1 1 160px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; }
+    .metric-label { font-size: 0.75rem; color: #8b949e; margin-bottom: 0.25rem; }
+    .metric-value { font-size: 1.5rem; font-weight: 700; }
+    .section-title { font-size: 0.95rem; font-weight: 600; color: var(--accent); margin: 1.25rem 0 0.5rem; }
+    .btn-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <h1>🐉 DRAGON-IA</h1>
+    <nav class="nav">
+      <a href="/">Chat</a>
+      <a href="/dashboard">Dashboard</a>
+    </nav>
+    <span id="ws-conn-status" class="badge badge-yellow" style="margin-left:auto">● connecting</span>
+  </header>
+
+  <div class="container">
+
+    <!-- Metrics Row -->
+    <div class="metrics-row">
+      <div class="metric-box">
+        <div class="metric-label">Security Score</div>
+        <div id="sec-score" class="metric-value score-ring high">100</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Uptime</div>
+        <div class="metric-value"><span id="uptime">0</span>s</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Active Agents</div>
+        <div class="metric-value">5</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Platform</div>
+        <div class="metric-value" style="font-size:1rem">DRAGON-IA v1</div>
+      </div>
+    </div>
+
+    <!-- Agent Status Grid -->
+    <div class="section-title">Agent Status</div>
+    <div id="agent-grid" class="agent-grid"><!-- rendered by dashboard.js --></div>
+
+    <!-- Action Buttons -->
+    <div class="btn-row">
+      <button id="run-sec-scan">🔒 Run Security Scan</button>
+      <button id="run-repo-scan">📦 Analyze Repo</button>
+      <button id="export-report" class="btn-secondary">⬇ Export Report JSON</button>
+    </div>
+
+    <!-- Log Stream -->
+    <div class="section-title">Live Log Stream</div>
+    <div id="log-stream" class="log-stream">
+      <div class="log-entry info">[system] Dashboard initialized.</div>
+    </div>
+
+    <!-- Security Details -->
+    <div class="section-title">Security Overview</div>
+    <div class="card">
+      <div class="card-title">Active Protections</div>
+      <ul style="padding-left:1.25rem;line-height:2">
+        <li><span class="badge badge-green">ON</span> &nbsp;Content-Security-Policy (CSP)</li>
+        <li><span class="badge badge-green">ON</span> &nbsp;Helmet HTTP headers</li>
+        <li><span class="badge badge-green">ON</span> &nbsp;Rate limiting (100 req/min)</li>
+        <li><span class="badge badge-green">ON</span> &nbsp;CORS policy</li>
+        <li><span class="badge badge-green">ON</span> &nbsp;AES-256 chat log encryption (server-side)</li>
+        <li><span class="badge badge-yellow">SAFE</span> &nbsp;AdSense toggle</li>
+      </ul>
+    </div>
+
+    <!-- CI/CD Status -->
+    <div class="section-title">CI / CD Status</div>
+    <div class="card">
+      <div class="card-title">GitHub Actions Workflows</div>
+      <ul style="padding-left:1.25rem;line-height:2">
+        <li><span class="badge badge-blue">WORKFLOW</span> &nbsp;ci.yml – lint + test + audit on every push</li>
+        <li><span class="badge badge-blue">WORKFLOW</span> &nbsp;nightly-scan.yml – nightly security scan &amp; patch proposals</li>
+      </ul>
+    </div>
+
+    <!-- PWA Info -->
+    <div class="section-title">PWA / Offline</div>
+    <div class="card">
+      <div class="card-title">Progressive Web App</div>
+      <ul style="padding-left:1.25rem;line-height:2">
+        <li><span class="badge badge-green">ON</span> &nbsp;Service Worker registered</li>
+        <li><span class="badge badge-green">ON</span> &nbsp;Offline cache – static assets</li>
+        <li><span class="badge badge-green">ON</span> &nbsp;Background sync – chat messages</li>
+        <li><span class="badge badge-green">ON</span> &nbsp;Web App Manifest</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <script src="/public/js/dashboard.js"></script>
+</body>
+</html>

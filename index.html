@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws: wss:;" />
+  <title>DRAGON-IA – Chat</title>
+  <meta name="description" content="DRAGON-IA – Global Multi-Agent AI Orchestration Platform chat interface" />
+  <meta name="theme-color" content="#58a6ff" />
+  <meta property="og:title" content="DRAGON-IA" />
+  <meta property="og:description" content="Global Multi-Agent AI Orchestration Platform" />
+  <meta property="og:type" content="website" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="/public/css/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>🐉 DRAGON-IA</h1>
+    <nav class="nav">
+      <a href="/">Chat</a>
+      <a href="/dashboard">Dashboard</a>
+    </nav>
+    <span id="ws-status" class="badge badge-yellow" style="margin-left:auto">● connecting</span>
+  </header>
+
+  <div class="chat-wrapper">
+    <div id="chat-messages" class="chat-messages">
+      <div class="message assistant">👋 Hello! I am DRAGON-IA. Select a model and start chatting.</div>
+    </div>
+
+    <div class="chat-input-row">
+      <select id="model-select" title="AI Model">
+        <option value="gpt-4">GPT-4</option>
+        <option value="claude">Claude</option>
+        <option value="llama">LLaMA</option>
+        <option value="local-llm">Local LLM</option>
+      </select>
+      <input id="chat-input" type="text" placeholder="Type your message…" autocomplete="off" />
+      <button id="send-btn">Send</button>
+    </div>
+  </div>
+
+  <!-- SAFE AdSense toggle (off by default per GDPR-friendly default) -->
+  <div style="position:fixed;bottom:1rem;right:1rem;display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--text)">
+    Ads
+    <label class="toggle-switch">
+      <input type="checkbox" id="ads-toggle" />
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
+  <div class="ad-slot" style="display:none" aria-hidden="true"><!-- AdSense placeholder --></div>
+
+  <script src="/public/js/app.js"></script>
+</body>
+</html>

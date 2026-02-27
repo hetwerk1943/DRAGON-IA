@@ -1,0 +1,29 @@
+{
+  "agents": {
+    "repo": { "enabled": true, "maxHistoryEntries": 50 },
+    "test": { "enabled": true, "maxResults": 100 },
+    "sec": { "enabled": true, "autoScanOnStartup": false },
+    "analytics": { "enabled": true, "maxMetrics": 1000 },
+    "chat": {
+      "enabled": true,
+      "defaultModel": "gpt-4",
+      "supportedModels": ["gpt-4", "claude", "llama", "local-llm"],
+      "maxSessionHistory": 100
+    }
+  },
+  "server": {
+    "port": 3000,
+    "rateLimit": { "windowMs": 60000, "max": 100 }
+  },
+  "security": {
+    "encryptionAlgorithm": "AES-256",
+    "csrfProtection": true,
+    "cspEnabled": true,
+    "safeAdsense": true,
+    "riskyDependencyPatterns": ["serialize-javascript@1.", "lodash@3.", "lodash@4.17.10", "minimist@0."]
+  },
+  "pwa": {
+    "enabled": true,
+    "cacheName": "dragon-ia-v1"
+  }
+}
