@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memory-service
+  namespace: dragon-ia
+  labels:
+    app: memory-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: memory-service
+  template:
+    metadata:
+      labels:
+        app: memory-service
+    spec:
+      containers:
+        - name: memory-service
+          image: dragon-ia/memory-service:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MEMORY_REDIS_URL
+              value: redis://redis:6379/1
+            - name: MEMORY_QDRANT_URL
+              value: http://qdrant:6333
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: memory-service
+  namespace: dragon-ia
+spec:
+  selector:
+    app: memory-service
+  ports:
+    - port: 8000
+      targetPort: 8000

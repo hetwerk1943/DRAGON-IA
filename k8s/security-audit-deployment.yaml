@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: security-audit
+  namespace: dragon-ia
+  labels:
+    app: security-audit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: security-audit
+  template:
+    metadata:
+      labels:
+        app: security-audit
+    spec:
+      containers:
+        - name: security-audit
+          image: dragon-ia/security-audit:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: AUDIT_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: dragon-secrets
+                  key: audit-database-url
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: security-audit
+  namespace: dragon-ia
+spec:
+  selector:
+    app: security-audit
+  ports:
+    - port: 8000
+      targetPort: 8000

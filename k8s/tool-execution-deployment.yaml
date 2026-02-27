@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tool-execution
+  namespace: dragon-ia
+  labels:
+    app: tool-execution
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tool-execution
+  template:
+    metadata:
+      labels:
+        app: tool-execution
+    spec:
+      containers:
+        - name: tool-execution
+          image: dragon-ia/tool-execution:latest
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tool-execution
+  namespace: dragon-ia
+spec:
+  selector:
+    app: tool-execution
+  ports:
+    - port: 8000
+      targetPort: 8000

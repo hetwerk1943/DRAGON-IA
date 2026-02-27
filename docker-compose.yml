@@ -1,0 +1,120 @@
+version: "3.9"
+
+services:
+  # ── Infrastructure ──
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: dragon
+      POSTGRES_PASSWORD: dragon
+      POSTGRES_DB: dragon_audit
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  # ── Backend Services ──
+  gateway:
+    build:
+      context: ./backend
+      args:
+        SERVICE_NAME: gateway
+    ports:
+      - "8000:8000"
+    environment:
+      GATEWAY_REDIS_URL: redis://redis:6379/0
+      GATEWAY_ORCHESTRATOR_URL: http://ai-orchestrator:8000
+    depends_on:
+      - redis
+      - ai-orchestrator
+
+  ai-orchestrator:
+    build:
+      context: ./backend
+      args:
+        SERVICE_NAME: ai_orchestrator
+    ports:
+      - "8001:8000"
+    environment:
+      ORCHESTRATOR_MODEL_ABSTRACTION_URL: http://model-abstraction:8000
+      ORCHESTRATOR_MEMORY_SERVICE_URL: http://memory-service:8000
+      ORCHESTRATOR_TOOL_SERVICE_URL: http://tool-execution:8000
+    depends_on:
+      - model-abstraction
+      - memory-service
+      - tool-execution
+
+  model-abstraction:
+    build:
+      context: ./backend
+      args:
+        SERVICE_NAME: model_abstraction
+    ports:
+      - "8002:8000"
+    environment:
+      MODEL_OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      MODEL_ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+
+  memory-service:
+    build:
+      context: ./backend
+      args:
+        SERVICE_NAME: memory_service
+    ports:
+      - "8003:8000"
+    environment:
+      MEMORY_REDIS_URL: redis://redis:6379/1
+      MEMORY_QDRANT_URL: http://qdrant:6333
+    depends_on:
+      - redis
+      - qdrant
+
+  tool-execution:
+    build:
+      context: ./backend
+      args:
+        SERVICE_NAME: tool_execution
+    ports:
+      - "8004:8000"
+
+  security-audit:
+    build:
+      context: ./backend
+      args:
+        SERVICE_NAME: security_audit
+    ports:
+      - "8005:8000"
+    environment:
+      AUDIT_DATABASE_URL: postgresql+asyncpg://dragon:dragon@postgres:5432/dragon_audit
+    depends_on:
+      - postgres
+
+  # ── Frontend ──
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    depends_on:
+      - gateway
+
+volumes:
+  redis_data:
+  postgres_data:
+  qdrant_data:
