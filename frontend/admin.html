@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UltraChat AI – Admin</title>
+  <style>
+    :root { --bg:#1a1a2e; --bg2:#16213e; --bg3:#0f3460; --txt:#e2e8f0; --txt2:#94a3b8; --accent:#00d4ff; --err:#ff6b6b; --ok:#51cf66; --border:rgba(0,212,255,.2); }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(--txt); min-height:100vh; padding:1.5rem; }
+    header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
+    header h1 { color:var(--accent); font-size:1.3rem; }
+    a.back { color:var(--txt2); text-decoration:none; font-size:.85rem; border:1px solid var(--border); padding:.3rem .7rem; border-radius:8px; }
+    a.back:hover { color:var(--accent); border-color:var(--accent); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+    .card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1rem; }
+    .card-label { font-size:.72rem; color:var(--txt2); text-transform:uppercase; letter-spacing:.06em; margin-bottom:.35rem; }
+    .card-value { font-size:1.8rem; font-weight:700; color:var(--accent); }
+    .card-sub { font-size:.78rem; color:var(--txt2); margin-top:.2rem; }
+    .section { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1rem; margin-bottom:1rem; }
+    .section h2 { font-size:.95rem; color:var(--accent); margin-bottom:.75rem; }
+    .bar-row { display:flex; align-items:center; gap:.75rem; margin-bottom:.5rem; font-size:.82rem; }
+    .bar-label { width:120px; flex-shrink:0; color:var(--txt2); }
+    .bar-track { flex:1; background:var(--bg3); border-radius:999px; height:8px; overflow:hidden; }
+    .bar-fill  { height:100%; background:var(--accent); border-radius:999px; transition:width .5s; }
+    .bar-fill.err { background:var(--err); }
+    .log-list { list-style:none; display:flex; flex-direction:column; gap:.3rem; }
+    .log-item { background:var(--bg3); padding:.35rem .6rem; border-radius:6px; font-size:.8rem; color:var(--txt2); font-family:monospace; }
+    #last-refresh { font-size:.72rem; color:var(--txt2); text-align:right; margin-bottom:.75rem; }
+    .status-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--ok); margin-right:.4rem; animation:blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>⚙️ UltraChat AI – Admin</h1>
+    <a href="index.html" class="back">← Powrót do czatu</a>
+  </header>
+
+  <p id="last-refresh">Ładowanie…</p>
+
+  <div class="grid" id="cards"></div>
+
+  <div class="section">
+    <h2>📊 Aktywność (dzisiaj)</h2>
+    <div id="bars"></div>
+  </div>
+
+  <div class="section">
+    <h2>📁 Pliki logów</h2>
+    <ul class="log-list" id="log-list"><li class="log-item">Ładowanie…</li></ul>
+  </div>
+
+  <script>
+    const BACKEND = 'http://localhost:3000';
+
+    function fmt(secs) {
+      const h = Math.floor(secs / 3600), m = Math.floor((secs % 3600) / 60), s = secs % 60;
+      return `${h}h ${m}m ${s}s`;
+    }
+
+    async function refresh() {
+      try {
+        const r = await fetch(`${BACKEND}/admin/stats`);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const d = await r.json();
+
+        document.getElementById('last-refresh').innerHTML =
+          `<span class="status-dot"></span>Ostatnia aktualizacja: ${new Date().toLocaleTimeString('pl-PL')}`;
+
+        const cards = [
+          { label: 'Uptime',          value: fmt(d.uptimeSecs),    sub: `od ${new Date(d.startedAt).toLocaleString('pl-PL')}` },
+          { label: 'Wiadomości dziś', value: d.todayMessages,      sub: 'czatów' },
+          { label: 'Błędy dziś',      value: d.todayErrors,        sub: 'błędów API/serw.' },
+          { label: 'Obrazy (sesja)',  value: d.totalImages,        sub: 'DALL·E 3' },
+          { label: 'Model',           value: d.model,              sub: 'OpenAI' },
+        ];
+
+        document.getElementById('cards').innerHTML = cards.map(c => `
+          <div class="card">
+            <div class="card-label">${c.label}</div>
+            <div class="card-value">${c.value}</div>
+            <div class="card-sub">${c.sub}</div>
+          </div>`).join('');
+
+        const maxVal = Math.max(d.todayMessages, d.todayErrors, 1);
+        document.getElementById('bars').innerHTML = [
+          { label: 'Wiadomości', val: d.todayMessages, cls: '' },
+          { label: 'Błędy',      val: d.todayErrors,   cls: 'err' },
+        ].map(b => `
+          <div class="bar-row">
+            <span class="bar-label">${b.label}: <strong>${b.val}</strong></span>
+            <div class="bar-track"><div class="bar-fill ${b.cls}" style="width:${Math.round(b.val/maxVal*100)}%"></div></div>
+          </div>`).join('');
+
+        const logs = d.logFiles || [];
+        document.getElementById('log-list').innerHTML = logs.length
+          ? logs.map(f => `<li class="log-item">📄 ${f}</li>`).join('')
+          : '<li class="log-item">Brak plików logów</li>';
+
+      } catch (err) {
+        document.getElementById('last-refresh').textContent = '❌ Błąd połączenia z backendem: ' + err.message;
+      }
+    }
+
+    refresh();
+    setInterval(refresh, 30000);
+  </script>
+</body>
+</html>
