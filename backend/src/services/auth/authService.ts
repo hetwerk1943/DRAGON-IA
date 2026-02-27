@@ -60,7 +60,7 @@ export class AuthService {
     return jwt.sign(
       { userId: user.id, role: user.role },
       config.jwt.secret,
-      { expiresIn: 86400 } // 24 hours in seconds
+      { expiresIn: config.jwt.expiresIn }
     );
   }
 

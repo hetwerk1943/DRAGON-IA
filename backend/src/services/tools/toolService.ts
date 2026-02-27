@@ -1,6 +1,63 @@
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '../../utils/logger';
 
+/**
+ * Safe recursive-descent math expression parser.
+ * Supports: +, -, *, /, %, parentheses, and decimal numbers.
+ */
+function safeEvaluate(expr: string): number {
+  const tokens = expr.replace(/\s+/g, '').split('');
+  let pos = 0;
+
+  function parseNumber(): number {
+    let num = '';
+    if (tokens[pos] === '-') { num += tokens[pos++]; }
+    while (pos < tokens.length && (/\d/.test(tokens[pos]) || tokens[pos] === '.')) {
+      num += tokens[pos++];
+    }
+    if (num === '' || num === '-') throw new Error('Expected number');
+    return parseFloat(num);
+  }
+
+  function parseFactor(): number {
+    if (tokens[pos] === '(') {
+      pos++; // skip '('
+      const result = parseExpression();
+      if (tokens[pos] !== ')') throw new Error('Missing closing parenthesis');
+      pos++; // skip ')'
+      return result;
+    }
+    return parseNumber();
+  }
+
+  function parseTerm(): number {
+    let result = parseFactor();
+    while (pos < tokens.length && (tokens[pos] === '*' || tokens[pos] === '/' || tokens[pos] === '%')) {
+      const op = tokens[pos++];
+      const right = parseFactor();
+      if (op === '*') result *= right;
+      else if (op === '/') result /= right;
+      else result %= right;
+    }
+    return result;
+  }
+
+  function parseExpression(): number {
+    let result = parseTerm();
+    while (pos < tokens.length && (tokens[pos] === '+' || tokens[pos] === '-')) {
+      const op = tokens[pos++];
+      const right = parseTerm();
+      if (op === '+') result += right;
+      else result -= right;
+    }
+    return result;
+  }
+
+  const result = parseExpression();
+  if (pos < tokens.length) throw new Error('Unexpected character');
+  return result;
+}
+
 export interface ToolDefinition {
   id: string;
   name: string;
@@ -53,8 +110,7 @@ export class ToolService {
         if (expression.length > 100) {
           throw new Error('Expression too long');
         }
-        // Evaluate using indirect eval restricted to numeric expression
-        const result = Number(new Function(`"use strict"; return (${expression})`)());
+        const result = safeEvaluate(expression);
         if (!isFinite(result)) {
           throw new Error('Expression result is not a finite number');
         }

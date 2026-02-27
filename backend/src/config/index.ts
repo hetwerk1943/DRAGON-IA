@@ -18,7 +18,7 @@ export const config = {
       }
       return secret || 'dev-secret-change-me';
     })(),
-    expiresIn: '24h',
+    expiresIn: 86400, // 24 hours in seconds
   },
   openai: {
     apiKey: process.env.OPENAI_API_KEY || '',
