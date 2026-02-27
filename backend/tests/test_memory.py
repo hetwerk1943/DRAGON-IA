@@ -1,11 +1,9 @@
 """Tests for memory service."""
-import pytest
 import json
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from uuid import uuid4
 
 from app.services.memory_service import MemoryService
-from app.models.memory_embedding import MemoryEmbedding
 
 
 class TestShortTermMemory:
@@ -74,7 +72,7 @@ class TestLongTermMemory:
 
     def test_store_long_term(self, mock_db):
         user_id = uuid4()
-        result = MemoryService.store_long_term(mock_db, user_id, "test content", "conversation")
+        MemoryService.store_long_term(mock_db, user_id, "test content", "conversation")
         mock_db.add.assert_called_once()
         mock_db.commit.assert_called_once()
 

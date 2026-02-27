@@ -1,6 +1,5 @@
 """Tests for billing service."""
-import pytest
-from unittest.mock import MagicMock, PropertyMock, patch
+from unittest.mock import MagicMock
 from uuid import uuid4
 
 from app.services.billing_service import BillingService, TIER_LIMITS, TIER_PRICING
@@ -13,7 +12,7 @@ class TestUsageLogging:
     def test_log_usage(self, mock_db, mock_subscription):
         mock_db.query.return_value.filter.return_value.first.return_value = mock_subscription
         user_id = uuid4()
-        usage = BillingService.log_usage(mock_db, user_id, "gpt-3.5-turbo", 100, 50)
+        BillingService.log_usage(mock_db, user_id, "gpt-3.5-turbo", 100, 50)
         mock_db.add.assert_called_once()
         mock_db.commit.assert_called_once()
 

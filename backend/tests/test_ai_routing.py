@@ -1,6 +1,6 @@
 """Tests for AI orchestrator routing and context management."""
 import pytest
-from app.services.ai_orchestrator import AIOrchestrator, MODEL_CONTEXT_WINDOWS, MODEL_FALLBACK_CHAIN
+from app.services.ai_orchestrator import AIOrchestrator
 from app.schemas.ai import ChatRequest, ChatMessage
 
 

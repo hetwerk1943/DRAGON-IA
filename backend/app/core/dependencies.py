@@ -27,7 +27,7 @@ async def get_current_user(
 
     # Try API key
     key_hash = hash_api_key(token)
-    api_key = db.query(ApiKey).filter(ApiKey.key_hash == key_hash, ApiKey.is_active == True).first()
+    api_key = db.query(ApiKey).filter(ApiKey.key_hash == key_hash, ApiKey.is_active is True).first()
     if api_key:
         user = db.query(User).filter(User.id == api_key.user_id).first()
         if user and user.is_active:

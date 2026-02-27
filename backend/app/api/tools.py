@@ -1,5 +1,5 @@
 """Tool execution API routes."""
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 from typing import Any, Dict, Optional
 from sqlalchemy.orm import Session

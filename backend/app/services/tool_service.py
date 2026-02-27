@@ -31,12 +31,12 @@ class ToolService:
     @staticmethod
     def list_available_tools(db: Session) -> list[Tool]:
         """List all active tools."""
-        return db.query(Tool).filter(Tool.is_active == True).all()
+        return db.query(Tool).filter(Tool.is_active is True).all()
 
     @staticmethod
     def get_tool(db: Session, tool_name: str) -> Optional[Tool]:
         """Get a tool by name."""
-        return db.query(Tool).filter(Tool.name == tool_name, Tool.is_active == True).first()
+        return db.query(Tool).filter(Tool.name == tool_name, Tool.is_active is True).first()
 
     @staticmethod
     def register_tool(db: Session, name: str, description: str, tool_type: str, config: dict = None) -> Tool:

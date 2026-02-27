@@ -1,5 +1,4 @@
 """Tests for content moderation service."""
-import pytest
 from app.services.moderation_service import ModerationService
 
 

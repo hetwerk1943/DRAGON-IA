@@ -1,6 +1,4 @@
 """Tests for tool execution service."""
-import pytest
-from unittest.mock import MagicMock
 from app.services.tool_service import ToolService, BUILTIN_TOOLS
 
 
@@ -18,7 +16,7 @@ class TestToolRegistry:
         assert tools == []
 
     def test_register_tool(self, mock_db):
-        tool = ToolService.register_tool(mock_db, "test_tool", "A test tool", "custom")
+        ToolService.register_tool(mock_db, "test_tool", "A test tool", "custom")
         mock_db.add.assert_called_once()
         mock_db.commit.assert_called_once()
 
