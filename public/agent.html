@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DRAGON-IA – Agent Dashboard</title>
+  <meta name="description" content="DRAGON-IA central agent dashboard" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#238636" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d1117; color: #c9d1d9; }
+    header { background: #161b22; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #30363d; }
+    header h1 { font-size: 1.3rem; color: #58a6ff; }
+    header nav a { color: #8b949e; text-decoration: none; margin-left: 16px; font-size: 0.9rem; }
+    header nav a:hover { color: #58a6ff; }
+    .container { max-width: 1200px; margin: 24px auto; padding: 0 16px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px; }
+    .card h2 { font-size: 1rem; color: #58a6ff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+    .badge.idle    { background: #21262d; color: #8b949e; }
+    .badge.running { background: #1f6feb; color: #fff; }
+    .badge.error   { background: #b62324; color: #fff; }
+    .score { font-size: 2rem; font-weight: 700; color: #2ea043; }
+    .score.medium { color: #d29922; }
+    .score.low    { color: #b62324; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #21262d; }
+    th { color: #8b949e; font-weight: 600; }
+    .severity-high     { color: #f85149; }
+    .severity-medium   { color: #d29922; }
+    .severity-low      { color: #3fb950; }
+    .severity-critical { color: #ff7b72; font-weight: 700; }
+    .controls { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+    button { background: #238636; color: #fff; border: none; border-radius: 6px; padding: 8px 18px; cursor: pointer; font-size: 0.9rem; }
+    button:hover { background: #2ea043; }
+    button.secondary { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; }
+    button.secondary:hover { background: #30363d; }
+    #log { background: #010409; border: 1px solid #30363d; border-radius: 6px; padding: 12px; height: 200px; overflow-y: auto; font-family: monospace; font-size: 0.8rem; color: #8b949e; }
+    .log-entry { margin-bottom: 4px; }
+    .log-entry.report { color: #3fb950; }
+    .log-entry.error   { color: #f85149; }
+    .log-entry.chat    { color: #58a6ff; }
+    #ad-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+    #ad-toggle input[type=checkbox] { width: 16px; height: 16px; }
+    .section-title { font-size: 1rem; color: #8b949e; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>DRAGON-IA Dashboard</h1>
+    <nav>
+      <a href="/">Chat</a>
+      <span id="ws-status-badge" class="badge idle" style="margin-left:16px;">WS: connecting</span>
+    </nav>
+  </header>
+
+  <div class="container">
+    <!-- Controls -->
+    <div class="controls">
+      <button id="btn-run-all">Run All Agents</button>
+      <button id="btn-refresh" class="secondary">Refresh</button>
+      <label id="ad-toggle">
+        <input type="checkbox" id="adsafe-toggle" checked />
+        SAFE AdSense mode
+      </label>
+    </div>
+
+    <!-- Agent Status Cards -->
+    <p class="section-title">Agent Status</p>
+    <div class="grid" id="agent-cards">
+      <!-- populated by dashboard.js -->
+    </div>
+
+    <!-- Scores -->
+    <p class="section-title">Scoring</p>
+    <div class="grid" id="score-cards">
+      <div class="card">
+        <h2>Security Score</h2>
+        <div class="score" id="sec-score">&mdash;</div>
+      </div>
+      <div class="card">
+        <h2>Repo Score</h2>
+        <div class="score" id="repo-score">&mdash;</div>
+      </div>
+      <div class="card">
+        <h2>Uptime</h2>
+        <div class="score" id="uptime" style="font-size:1.2rem">&mdash;</div>
+      </div>
+      <div class="card">
+        <h2>Active Sessions</h2>
+        <div class="score" id="sessions">0</div>
+      </div>
+    </div>
+
+    <!-- Vulnerabilities -->
+    <p class="section-title">Security Alerts</p>
+    <div class="card" style="margin-bottom:24px;">
+      <table>
+        <thead><tr><th>Type</th><th>Severity</th><th>Message</th></tr></thead>
+        <tbody id="vuln-table">
+          <tr><td colspan="3" style="color:#484f58;font-style:italic;">No data yet – run agents.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Event Log -->
+    <p class="section-title">Live Agent Log</p>
+    <div id="log"></div>
+  </div>
+
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
