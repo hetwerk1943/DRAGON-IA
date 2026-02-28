@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DRAGON-IA</title>
+  <link rel="stylesheet" href="/styles/naruto-theme.css" />
+  <style>
+    #chat { max-width: 640px; margin: 2em auto; }
+    #messages { min-height: 200px; margin-bottom: 1em; }
+    .msg { padding: 0.5em; margin-bottom: 0.5em; border-radius: 4px; }
+    .msg.user { text-align: right; }
+    .msg.assistant { background-color: var(--color-card); }
+    form { display: flex; gap: 0.5em; }
+    input[type="text"] {
+      flex: 1; padding: 0.5em; border: 1px solid var(--color-border);
+      border-radius: 4px; background: var(--color-card); color: var(--color-text);
+    }
+  </style>
+</head>
+<body>
+  <div id="chat">
+    <h1>DRAGON-IA</h1>
+    <div id="messages" class="card"></div>
+    <form id="chatForm">
+      <input type="text" id="userInput" placeholder="Napisz wiadomość..." required />
+      <button type="submit" class="btn">Wyślij</button>
+    </form>
+  </div>
+  <script>
+    const form = document.getElementById("chatForm");
+    const input = document.getElementById("userInput");
+    const messages = document.getElementById("messages");
+
+    function addMessage(text, role) {
+      const div = document.createElement("div");
+      div.className = "msg " + role;
+      div.textContent = text;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+      addMessage(text, "user");
+      input.value = "";
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text }),
+        });
+        const data = await res.json();
+        const text = data.reply || (typeof data.error === "string" ? data.error : JSON.stringify(data.error));
+        addMessage(text, "assistant");
+      } catch {
+        addMessage("Błąd połączenia z serwerem", "assistant");
+      }
+    });
+  </script>
+</body>
+</html>
